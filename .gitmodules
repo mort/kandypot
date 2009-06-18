@@ -1,0 +1,6 @@
+[submodule "vendor/plugins/random_items"]
+	path = vendor/plugins/random_items
+	url = git://github.com/mort/random_items.git
+[submodule "vendor/plugins/delayed_job"]
+	path = vendor/plugins/delayed_job
+	url = git://github.com/tobi/delayed_job.git
