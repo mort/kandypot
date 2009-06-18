@@ -20,4 +20,5 @@
 
 class App < ActiveRecord::Base
   validates_presence_of :name, :nicename, :app_key, :app_token
+  validates_uniqueness_of :name, :nicename, :app_key, :app_token
 end
