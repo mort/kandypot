@@ -1,0 +1,13 @@
+defaults: &defaults
+  apps:
+    credentials:
+      key_length: 32
+  
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
