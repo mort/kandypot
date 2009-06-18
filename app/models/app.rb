@@ -21,4 +21,19 @@
 class App < ActiveRecord::Base
   validates_presence_of :name, :nicename, :app_key, :app_token
   validates_uniqueness_of :name, :nicename, :app_key, :app_token
+  
+  before_validation :generate_credentials
+  
+  private
+  
+  def generate_credentials
+    
+    size = Settings.apps.credentials.key_length
+    
+    [:app_key=, :app_token=].each do |a|
+      self.send(a,KeyGenerator.generate(size))
+    end
+  end
+  
+  
 end
