@@ -24,7 +24,6 @@ Rails::Initializer.run do |config|
   config.gem 'wvanbergen-http_status_exceptions', :lib => 'http_status_exceptions', :source => 'http://gems.github.com'
   config.gem 'logging'
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
-  config.gem 'tobi-delayed_job', :source => 'http://gems.github.com'
   
   # Only load the plugins named here, in the order given (default is alphabetical).
   # :all can be used as a placeholder for all plugins not explicitly named
