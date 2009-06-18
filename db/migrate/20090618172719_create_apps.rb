@@ -23,6 +23,7 @@ class CreateApps < ActiveRecord::Migration
     end
 
     add_index(:apps, :name, :unique => true)    
+    add_index(:apps, :nicename, :unique => true)    
     add_index(:apps, :url, :unique => true)    
     add_index(:apps, :app_key, :unique => true)    
     add_index(:apps, :app_token, :unique => true)    
