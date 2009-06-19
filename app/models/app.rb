@@ -18,11 +18,26 @@
 #  updated_at    :datetime
 #
 
+require 'hmac-sha1'
+
 class App < ActiveRecord::Base
   validates_presence_of :name, :nicename, :app_key, :app_token
   validates_uniqueness_of :name, :nicename, :app_key, :app_token
   
   before_validation :generate_credentials
+  
+  def self.authenticate(app_token, data, signature)
+    
+    app = App.find_by_app_token(app_token)
+    
+    if app
+      (OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, data)  == signature)
+    else
+      raise ActiveRecord::RecordNotFound
+    end
+    
+  end
+  
   
   private
   
@@ -34,6 +49,8 @@ class App < ActiveRecord::Base
       self.send(a,KeyGenerator.generate(size))
     end
   end
+  
+  
   
   
 end
