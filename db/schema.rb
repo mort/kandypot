@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090618172719) do
+ActiveRecord::Schema.define(:version => 20090619215718) do
 
   create_table "apps", :force => true do |t|
     t.string   "name"
@@ -32,5 +32,18 @@ ActiveRecord::Schema.define(:version => 20090618172719) do
   add_index "apps", ["name"], :name => "index_apps_on_name", :unique => true
   add_index "apps", ["nicename"], :name => "index_apps_on_nicename", :unique => true
   add_index "apps", ["url"], :name => "index_apps_on_url", :unique => true
+
+  create_table "members", :force => true do |t|
+    t.integer  "app_id"
+    t.string   "member_token",           :default => "", :null => false
+    t.integer  "deposits_count",         :default => 0,  :null => false
+    t.integer  "transfers_count",        :default => 0,  :null => false
+    t.integer  "kandies_count",          :default => 0,  :null => false
+    t.integer  "kandy_ownerships_count", :default => 0,  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "members", ["member_token"], :name => "index_members_on_member_token", :unique => true
 
 end
