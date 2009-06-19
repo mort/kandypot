@@ -21,10 +21,17 @@
 require 'hmac-sha1'
 
 class App < ActiveRecord::Base
+  
+  SETTINGS_BASE_PATH = Rails.root.join('config','app_settings')
+  
   validates_presence_of :name, :nicename, :app_key, :app_token
   validates_uniqueness_of :name, :nicename, :app_key, :app_token
   
   before_validation :generate_credentials
+  
+  def self.default_settings_path
+    [App::SETTINGS_BASE_PATH, "default.yml"].join('/')
+  end
   
   def self.authenticate(app_token, data, signature)
     
@@ -41,6 +48,19 @@ class App < ActiveRecord::Base
   def self.pack_up_params_for_signature(params) 
     return false unless params.is_a?(Hash)
     return Digest::SHA1.hexdigest(params.to_s)   
+  end
+  
+  
+  def has_settings?
+    return true if File.exists?(self.settings_filepath)
+  end
+  
+  def settings_filepath
+    [App::SETTINGS_BASE_PATH, "#{self.nicename}.yml"].join('/')
+  end
+  
+  def settings
+    @settings ||= (self.has_settings? ? Settings.new(settings_filepath) : Settings.new(App.default_settings_path))
   end
   
   

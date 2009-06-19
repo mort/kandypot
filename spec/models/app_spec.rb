@@ -1,11 +1,9 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 require 'hmac-sha1'
 
-describe App do
+describe App, 'credendials and authentication' do
 
   before do
-    # This will make a Comment, a Post, and a User (the author of
-    # the Post), and generate values for all their attributes:
     @app = App.make
   end
 
@@ -63,3 +61,33 @@ describe App do
   
 end
 
+
+describe App, 'app settings' do
+  
+  before do
+    @app = App.make(:nicename => 'iwanna')
+  end
+  
+  it 'know when it has specific settings' do
+    mock(File).exists?(@app.settings_filepath){true}
+    @app.has_settings?.should be_true
+  end
+  
+  it 'should return the path for its settings file' do
+    @app.settings_filepath.should == Rails.root.join('config','app_settings',"#{@app.nicename}.yml").to_s
+  end
+  
+  it 'should load the specific settings if they exist' do
+    mock(@app).has_settings?{true}
+    mock(Settings).new(@app.settings_filepath){'iwanna'}
+    @app.settings.should == 'iwanna'
+  end
+  
+  it 'should load default settings if specific dont exist' do
+    mock(@app).has_settings?{false}
+    mock(Settings).new(App.default_settings_path){'default'}
+    @app.settings.should == 'default'
+  end
+  
+
+end
