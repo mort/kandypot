@@ -38,6 +38,11 @@ class App < ActiveRecord::Base
     
   end
   
+  def self.pack_up_params_for_signature(params) 
+    return false unless params.is_a?(Hash)
+    return Digest::SHA1.hexdigest(params.to_s)   
+  end
+  
   
   private
   
