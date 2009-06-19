@@ -25,10 +25,18 @@ describe App do
     app = App.find_by_app_token(@app.app_token)
     app.should_not be_nil
   end
+  
+  it 'should pack up a params hash for signature prior to authentication' do
+    params = {:foo => 'bar', :wadus => 'raur'}
+    
+    App.pack_up_params_for_signature(params).class.should == String
+  end
 
   it "should authenticate with valid credentials" do
     
-    data = Digest::SHA1.hexdigest(%w(foo bar baz).join(''))    
+    data = 'loremipsum'
+    stub(App).pack_up_params_for_signature(:foo => 'bar', :wadus => 'raur'){data}
+    
     app_key = @app.app_key
     app_token = @app.app_token
     
@@ -40,7 +48,9 @@ describe App do
   
   it "should not authenticate with invalid credentials" do
     
-    data = Digest::SHA1.hexdigest(%w(foo bar baz).join(''))    
+    data = 'loremipsum'
+    stub(App).pack_up_params_for_signature(:foo => 'bar', :wadus => 'raur'){data}
+    
     app_key = @app.app_key
     app_token = @app.app_token
     
