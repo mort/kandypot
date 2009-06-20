@@ -3,7 +3,7 @@ require 'hmac-sha1'
 
 describe App, 'credendials and authentication' do
 
-  before do
+  before(:each) do
     @app = App.make
   end
 

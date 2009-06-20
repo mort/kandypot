@@ -1,0 +1,2 @@
+class KandiesController < ApplicationController
+end

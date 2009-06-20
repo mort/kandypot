@@ -1,0 +1,2 @@
+class KandyOwnershipsController < ApplicationController
+end

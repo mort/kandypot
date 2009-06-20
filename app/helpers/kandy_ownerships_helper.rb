@@ -1,0 +1,2 @@
+module KandyOwnershipsHelper
+end

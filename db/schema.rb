@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090619215718) do
+ActiveRecord::Schema.define(:version => 20090619222107) do
 
   create_table "apps", :force => true do |t|
     t.string   "name"
@@ -32,6 +32,22 @@ ActiveRecord::Schema.define(:version => 20090619215718) do
   add_index "apps", ["name"], :name => "index_apps_on_name", :unique => true
   add_index "apps", ["nicename"], :name => "index_apps_on_nicename", :unique => true
   add_index "apps", ["url"], :name => "index_apps_on_url", :unique => true
+
+  create_table "kandies", :force => true do |t|
+    t.integer  "kandy_ownership_id"
+    t.string   "uuid",               :limit => 36, :default => "", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "kandy_ownerships", :force => true do |t|
+    t.integer  "member_id"
+    t.integer  "kandy_id"
+    t.integer  "status",     :limit => 1, :default => 1, :null => false
+    t.datetime "expired_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "members", :force => true do |t|
     t.integer  "app_id"
