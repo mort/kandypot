@@ -9,7 +9,24 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090620104642) do
+ActiveRecord::Schema.define(:version => 20090620163846) do
+
+  create_table "activities", :force => true do |t|
+    t.string   "credentials_app_token"
+    t.string   "credentials_signature"
+    t.string   "member_token"
+    t.string   "content_token"
+    t.string   "content_owner_member_token"
+    t.string   "subject"
+    t.string   "content_type"
+    t.string   "content_source"
+    t.string   "ip",                         :limit => 15
+    t.datetime "activity_at"
+    t.datetime "processed_at"
+    t.integer  "proccessing_status",         :limit => 2
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "apps", :force => true do |t|
     t.string   "name"

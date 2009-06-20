@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :activities
+
  
  
  # These resources are created but we don't wanna to expose them to the world (yet)
