@@ -16,7 +16,7 @@ class KandyOwnership < ActiveRecord::Base
   belongs_to :kandy
   belongs_to :member
   
-  STATUSES = [:active, :expired]
+  STATUSES = [:expired, :active]
   
   STATUSES.each_with_index do |status, i|
     options = {:conditions => {:status => i}} 

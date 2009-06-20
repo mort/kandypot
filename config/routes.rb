@@ -1,6 +1,10 @@
 ActionController::Routing::Routes.draw do |map|
+ 
+ 
+ # These resources are created but we don't wanna to expose them to the world (yet)
 
- #  map.resources :kandy_ownerships
+ # map.resources :operation_logs
+ # map.resources :kandy_ownerships
  # map.resources :kandies
 
 

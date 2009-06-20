@@ -34,3 +34,5 @@ config.gem "dchelimsky-rspec", :lib => false, :version => ">= 1.1.99.13"
 config.gem "dchelimsky-rspec-rails", :lib => false, :version => ">= 1.1.99.13"
 config.gem 'aslakhellesoy-cucumber', :lib => false, :version => ">= 0.1.99.23"
 config.gem 'webrat', :lib => false
+
+config.cache_classes = false

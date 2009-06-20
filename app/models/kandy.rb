@@ -14,6 +14,7 @@ require 'uuid'
 
 class Kandy < ActiveRecord::Base
   has_many :kandy_ownerships
+  has_one :current_ownership, :class_name => 'KandyOwnership', :conditions => ['kandy_ownerships.status = ?', KandyOwnership::STATUSES.index(:active)]
   
   validates_presence_of :uuid
 
