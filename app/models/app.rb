@@ -36,15 +36,12 @@ class App < ActiveRecord::Base
   end
   
   def self.authenticate(app_token, data, signature)
-    
     app = App.find_by_app_token(app_token)
-    
     if app
       (OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, data)  == signature)
     else
       raise ActiveRecord::RecordNotFound
     end
-    
   end
   
   def self.pack_up_params_for_signature(params) 

@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(:version => 20090620163846) do
     t.string   "member_token"
     t.string   "content_token"
     t.string   "content_owner_member_token"
-    t.string   "subject"
+    t.string   "activity_type"
     t.string   "content_type"
     t.string   "content_source"
     t.string   "ip",                         :limit => 15
