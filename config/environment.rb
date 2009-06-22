@@ -22,7 +22,7 @@ Rails::Initializer.run do |config|
   
   config.gem "settingslogic"
   config.gem 'wvanbergen-http_status_exceptions', :lib => 'http_status_exceptions', :source => 'http://gems.github.com'
-  config.gem 'logging'
+  #config.gem 'logging'
   config.gem 'javan-whenever', :lib => false, :source => 'http://gems.github.com'
   config.gem 'notahat-machinist', :lib => 'machinist', :source => 'http://gems.github.com'
   
