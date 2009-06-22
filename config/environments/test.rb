@@ -30,9 +30,9 @@ config.action_mailer.delivery_method = :test
 
 config.gem 'rr'
 config.gem 'faker'
-config.gem "dchelimsky-rspec", :lib => false, :version => ">= 1.1.99.13" 
-config.gem "dchelimsky-rspec-rails", :lib => false, :version => ">= 1.1.99.13"
-config.gem 'aslakhellesoy-cucumber', :lib => false, :version => ">= 0.1.99.23"
+config.gem "rspec", :lib => false, :version => ">= 1.2.6", :source => 'http://gems.github.com'
+config.gem "rspec-rails", :lib => false, :version => ">= 1.2.6", :source => 'http://gems.github.com'
+config.gem 'aslakhellesoy-cucumber', :lib => false, :version => ">= 0.3.11", :source => 'http://gems.github.com'
 config.gem 'webrat', :lib => false
 
 config.cache_classes = false
