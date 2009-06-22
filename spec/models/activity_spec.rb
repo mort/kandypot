@@ -168,5 +168,68 @@ describe Activity, 'authentication' do
   end
   
  
-  
 end
+
+
+
+ describe Activity, 'judgement' do
+   before do
+     @app = App.make
+     @m = Member.make(:app => @app)
+     a = Activity.plan(:credentials_app_token => @app.app_token, :member_token => @m.member_token)
+     @a = sign_n_make(a,@app)     
+   end
+   
+   it 'should include the Hammurabi module' do
+     @a.should respond_to(:judge)
+   end
+   
+   it 'should have methods for defined activity types' do
+     @a.should respond_to("judge_content_creation".to_sym)
+   end
+   
+   it 'should have a judge_reacion_comment method' do
+     a = Activity.plan(:reaction, :credentials_app_token => @app.app_token, :member_token => @m.member_token)
+     @a = sign_n_make(a,@app)
+     @a.should respond_to('judge_reaction_comment')
+   end
+   
+   
+   it 'should reward content creation' do
+     mock(App).find_by_app_token(@a.credentials_app_token){@app} 
+
+     mock(@app.settings.probabilities).default {0.7}
+     mock(@app.settings.amounts.deposits).content_creation {10}
+
+     mock(Trickster).whim(10,0.7){10}
+
+     mock.instance_of(Member).do_deposit(10,'content_creation')
+
+     @a.judge
+   end
+   
+
+   it 'should reward reaction comment' do
+    @m2 = Member.make(:app => @app)
+    a2 = Activity.plan(:reaction, :credentials_app_token => @app.app_token, :member_token => @m.member_token, :content_owner_member_token => @m2.member_token)
+    @a2 = sign_n_make(a2,@app) 
+ 
+    mock(App).find_by_app_token(@a2.credentials_app_token){@app} 
+
+    mock(@app.settings.probabilities).default {0.7}
+    mock(@app.settings.amounts.deposits).reaction_comment{5}
+    mock(@app.settings.amounts.transfers).reaction_comment{3}  
+
+    mock(Trickster).whim(5, 0.7){5}
+    mock(Trickster).whim(3, 0.7){3}
+
+    mock.instance_of(Member).do_deposit(5,'reaction_comment')
+    mock.instance_of(Member).do_transfer(3, @m2, 'reaction_comment (received)')
+
+    @a2.judge
+   end    
+   
+
+ 
+ end
+ 

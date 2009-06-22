@@ -1,0 +1,23 @@
+defaults: &defaults
+  probabilities:
+    default: 0.7
+    deposits:
+      initial: 1
+  amounts:
+    deposits:
+      initial: 20
+      content_creation: 10
+      reaction_comment: 6
+      reaction_other: 3
+    transfers:
+      reaction_comment: 3
+      reaction_other: 1
+ 
+development:
+  <<: *defaults
+ 
+test:
+  <<: *defaults
+ 
+production:
+  <<: *defaults

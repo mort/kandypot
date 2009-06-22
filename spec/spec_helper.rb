@@ -50,3 +50,21 @@ Spec::Runner.configure do |config|
   # 
   # For more information take a look at Spec::Runner::Configuration and Spec::Runner
 end
+
+
+def sign_n_make(a, app)  
+  params = {}
+  params["member_token"]   = a[:member_token]
+  params["content_token"]  = a[:content_token]
+  params["content_type"]   = a[:content_type]
+  params["content_source"] = a[:content_source]
+  params["activity_type"]  = a[:activity_type]
+  params["activity_at"]    = a[:activity_at]
+
+  s = Digest::SHA1.hexdigest(params.to_s)   
+
+  a[:credentials_signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, s)
+  mock(App).pack_up_params_for_signature(params){ s }
+  mock(App).authenticate(a[:credentials_app_token], s, a[:credentials_signature]){true}
+  return Activity.make(a)
+end

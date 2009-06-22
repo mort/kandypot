@@ -21,6 +21,9 @@
 #
 
 class Activity < ActiveRecord::Base
+  require 'hammurabi'
+  include Kandypot::Hammurabi
+  
   ACTIVITY_TYPES = ['content_creation', 'reaction_comment', 'reaction_favorite', 'reaction_other']
   SIGNATURE_PARAMS = [:member_token, :content_token, :content_type, :content_source, :activity_type, :activity_at]
   
