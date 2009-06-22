@@ -33,12 +33,45 @@ describe Activity, 'validation' do
   
   it 'should create well formed activities (content_creation)' do
     a = Activity.plan(:credentials_app_token => @app.app_token)
+    
+    params = {}
+    params["member_token"]   = a[:member_token]
+    params["content_token"]  = a[:content_token]
+    params["content_type"]   = a[:content_type]
+    params["content_source"] = a[:content_source]
+    params["activity_type"]  = a[:activity_type]
+    params["activity_at"]    = a[:activity_at]
+
+    s = Digest::SHA1.hexdigest(params.to_s)   
+
+   a[:credentials_signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, s)
+
+    mock(App).pack_up_params_for_signature(params){ s }
+    mock(App).authenticate(a[:credentials_app_token], s, a[:credentials_signature]){true}
+    
     activity = Activity.new(a)
     activity.should be_valid
   end
   
   it 'should create well formed activities (reaction_*)' do
     a = Activity.plan(:reaction, :credentials_app_token => @app.app_token)
+    
+    
+      params = {}
+      params["member_token"]   = a[:member_token]
+      params["content_token"]  = a[:content_token]
+      params["content_type"]   = a[:content_type]
+      params["content_source"] = a[:content_source]
+      params["activity_type"]  = a[:activity_type]
+      params["activity_at"]    = a[:activity_at]
+
+      s = Digest::SHA1.hexdigest(params.to_s)   
+
+     a[:credentials_signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, s)
+
+      mock(App).pack_up_params_for_signature(params){ s }
+      mock(App).authenticate(a[:credentials_app_token], s, a[:credentials_signature]){true}
+    
     activity = Activity.new(a)
     activity.should be_valid
   end
