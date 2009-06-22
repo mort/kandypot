@@ -39,7 +39,9 @@ class Activity < ActiveRecord::Base
   def authenticated?
     signature_params = self.attributes.reject {|k,v| !SIGNATURE_PARAMS.include?(k.to_sym)}
     packed_signature_params = App.pack_up_params_for_signature(signature_params)
-    return App.authenticate(self.credentials_app_token, packed_signature_params, self.credentials_signature)
+    auth = App.authenticate(self.credentials_app_token, packed_signature_params, self.credentials_signature)
+    self.errors.add(:authentication, 'Bad credentials') unless auth 
+    return auth
   end
   
 end

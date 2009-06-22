@@ -40,7 +40,7 @@ class App < ActiveRecord::Base
     if app
       (OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, data)  == signature)
     else
-      raise ActiveRecord::RecordNotFound
+      return false
     end
   end
   
