@@ -33,6 +33,10 @@ class Activity < ActiveRecord::Base
   validates_inclusion_of :activity_type, :in => ACTIVITY_TYPES
   validate :authenticated?
   
+  after_create do |activity|
+    activity.send_later(:judge)
+  end
+  
   def self.kind_of?(activity_type)
     return false unless ACTIVITY_TYPES.include?(activity_type)
     return :content_creation if activity_type == 'content_creation'

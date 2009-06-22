@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe Activity, 'detecting type' do
+describe Activity do
   before do
     @app = App.make
   end
@@ -21,6 +21,13 @@ describe Activity, 'detecting type' do
     a = Activity.plan(:activity_type => 'foo', :credentials_app_token => @app.app_token)
     activity = Activity.new(a)
     Activity.kind_of?(activity.activity_type).should be_false
+  end
+  
+  it 'should be enqueued for judgement' do
+    lambda {
+      a = Activity.plan
+      s = sign_n_make(a, @app)
+    }.should change(Delayed::Job,:count).by(1)
   end
   
 end
