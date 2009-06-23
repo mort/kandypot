@@ -83,4 +83,25 @@ describe Member, 'doing a transfer' do
     }.should change(@sender.sent_transfers, :count).by(1)
   end
   
+  
 end  
+
+describe Member, 'kandy cache' do
+  before do
+    @member = Member.make
+  end
+  
+  it 'should be updatable per member' do
+    lambda{
+      @member.do_deposit(50, 'foo')
+      @member.update_kandy_cache
+    }.should change(@member, :kandies_count).by(50)
+  end
+  
+  it 'should be updatable for all members' do
+    mock.instance_of(Member).update_kandy_cache
+    Member.update_every_kandy_cache
+  end
+  
+
+end

@@ -23,6 +23,7 @@ end
 Member.blueprint do
   app
   member_token 
+  kandies_count { 0 }
 end
 
 Kandy.blueprint do
