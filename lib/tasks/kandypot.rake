@@ -1,14 +1,8 @@
 task :update_kandy_caches => :environment do
 
-  m = if ENV['app_id']
-    App.find(ENV['app_id']).members
-  else
-    Member
-  end
+  m = ENV['app_id'] ? App.find_by_id(ENV['app_id']).members : Member  
+  m.update_every_kandy_cache unless m.nil?
   
-  m.update_every_kandy_cache
-  
-  RAILS_DEFAULT_LOGGER.flush
 end
 
 
