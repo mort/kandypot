@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090620163846) do
+ActiveRecord::Schema.define(:version => 20090622194905) do
 
   create_table "activities", :force => true do |t|
     t.string   "credentials_app_token"
@@ -49,6 +49,19 @@ ActiveRecord::Schema.define(:version => 20090620163846) do
   add_index "apps", ["name"], :name => "index_apps_on_name", :unique => true
   add_index "apps", ["nicename"], :name => "index_apps_on_nicename", :unique => true
   add_index "apps", ["url"], :name => "index_apps_on_url", :unique => true
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.string   "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "kandies", :force => true do |t|
     t.string   "uuid",       :limit => 36, :default => "", :null => false
