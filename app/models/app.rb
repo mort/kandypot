@@ -30,6 +30,7 @@ class App < ActiveRecord::Base
   before_validation :generate_credentials
   
   has_many :members
+  has_many :notifications, :order => 'created_at DESC'
   
   def self.default_settings_path
     [App::SETTINGS_BASE_PATH, "default.yml"].join('/')

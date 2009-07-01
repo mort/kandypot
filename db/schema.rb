@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090622194905) do
+ActiveRecord::Schema.define(:version => 20090701211241) do
 
   create_table "activities", :force => true do |t|
     t.string   "credentials_app_token"
@@ -90,6 +90,15 @@ ActiveRecord::Schema.define(:version => 20090622194905) do
   end
 
   add_index "members", ["member_token"], :name => "index_members_on_member_token", :unique => true
+
+  create_table "notifications", :force => true do |t|
+    t.integer  "app_id"
+    t.string   "title",      :default => "", :null => false
+    t.text     "body",                       :null => false
+    t.string   "category",   :default => "", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "operation_logs", :force => true do |t|
     t.integer  "member_id"
