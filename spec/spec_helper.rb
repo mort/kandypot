@@ -5,7 +5,7 @@ require File.expand_path(File.dirname(__FILE__) + "/../config/environment")
 require 'spec/autorun'
 require 'spec/rails'
 require File.expand_path(File.dirname(__FILE__) + "/blueprints")
-
+require File.expand_path(File.dirname(__FILE__) + "/be_valid_feed")
 
 Spec::Runner.configure do |config|
   config.mock_with :rr
@@ -55,16 +55,13 @@ end
 def sign_n_make(a, app)  
   params = {}
   params["member_token"]   = a[:member_token]
-  params["content_token"]  = a[:content_token]
-  params["content_type"]   = a[:content_type]
-  params["content_source"] = a[:content_source]
   params["activity_type"]  = a[:activity_type]
   params["activity_at"]    = a[:activity_at]
 
   s = Digest::SHA1.hexdigest(params.to_s)   
 
-  a[:credentials_signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, s)
+  a[:signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, s)
   mock(App).pack_up_params_for_signature(params){ s }
-  mock(App).authenticate(a[:credentials_app_token], s, a[:credentials_signature]){true}
+  mock(App).authenticate(a[:app_token], s, a[:signature]){true}
   return Activity.make(a)
 end

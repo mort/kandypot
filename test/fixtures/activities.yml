@@ -1,23 +1,24 @@
 # == Schema Information
-# Schema version: 20090620163846
+# Schema version: 20090702181526
 #
 # Table name: activities
 #
-#  id                         :integer(4)      not null, primary key
-#  credentials_app_token      :string(255)
-#  credentials_signature      :string(255)
-#  member_token               :string(255)
-#  content_token              :string(255)
-#  content_owner_member_token :string(255)
-#  activity_type              :string(255)
-#  content_type               :string(255)
-#  content_source             :string(255)
-#  ip                         :string(15)
-#  activity_at                :datetime
-#  processed_at               :datetime
-#  proccessing_status         :integer(2)
-#  created_at                 :datetime
-#  updated_at                 :datetime
+#  id                 :integer(4)      not null, primary key
+#  app_token          :string(255)
+#  signature          :string(255)
+#  member_token       :string(255)
+#  content_token      :string(255)
+#  member_b_token     :string(255)
+#  activity_type      :string(255)
+#  content_type       :string(255)
+#  content_source     :string(255)
+#  ip                 :string(15)
+#  activity_at        :datetime
+#  processed_at       :datetime
+#  proccessing_status :integer(2)
+#  created_at         :datetime
+#  updated_at         :datetime
+#  category           :string(255)
 #
 
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html

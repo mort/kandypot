@@ -6,12 +6,20 @@ defaults: &defaults
   amounts:
     deposits:
       initial: 20
-      content_creation: 10
-      reaction_comment: 6
-      reaction_other: 3
+      creation:
+        default: 10
+      reaction:  
+        default: 6
+        comment: 6
+      relationship:  
+        default: 6
+        add: 6
     transfers:
-      reaction_comment: 3
-      reaction_other: 1
+      reaction:
+        default: 3  
+        comment: 3
+      relationship:
+        default: 3
  
 development:
   <<: *defaults
