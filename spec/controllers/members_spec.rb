@@ -17,10 +17,10 @@ describe MembersController, 'get' do
   
 end
 
-describe MembersController, 'a correct request' do
+describe MembersController, 'get /member' do
   before do
     @member = Member.make(:kandies_count => 20)
-    str =  Digest::SHA1.hexdigest("#{@member.member_token}###{Time.now.midnight.to_s}")
+    str =  Digest::SHA1.hexdigest(Time.now.midnight.utc.iso8601)
     signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @member.app.app_key, str)
     get :show, :id => @member.member_token, :app_id => @member.app.id, :signature => signature
   end
@@ -45,6 +45,42 @@ describe MembersController, 'a correct request' do
     ActiveSupport::JSON::decode(response.body)['member_token'].should == @member.member_token
   end
   
-  
-  
+
 end
+
+
+describe MembersController, 'get /members' do
+  before do
+    @app = App.make
+    10.times { Member.make(:app => @app) }
+    str =  Digest::SHA1.hexdigest(Time.now.midnight.utc.iso8601)
+    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, str)
+    get :index, :app_id => @app.id, :signature => signature, :format => 'csv'
+  end
+  
+  it 'should respond with success' do  
+    response.response_code.should == 200
+  end
+  
+  it 'should respond with content type text/plain' do
+    response.content_type.should == 'text/plain'
+  end
+  
+  it 'should have the right number of lines' do
+    csv = response.body
+    arr = csv.split("\n")
+    arr.size.should == 10
+  end
+  
+  it 'should have the right number of cols' do
+    csv = response.body
+    arr = csv.split("\n")
+    line = arr.first
+    cols = line.split(',')
+    
+    cols.size.should == 3
+    
+  end
+
+end
+

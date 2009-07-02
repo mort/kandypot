@@ -1,5 +1,6 @@
 class MembersController < ApplicationController
   before_filter :require_app
+  CSV_FIELDS = %w(member_token kandies_count updated_at)
   
   def show
     @member = @app.members.find_by_member_token(params[:id])
@@ -10,16 +11,21 @@ class MembersController < ApplicationController
     end
   end
   
-  private
-  
-  def require_app
-    @app = App.find_by_id params[:app_id]
-    unless @app
-      render :text => '', :status => :not_found 
-    else
-      str = Digest::SHA1.hexdigest("#{params[:id]}###{Time.now.midnight.to_s}")    
-      render :text => '', :status => :forbidden unless App.authenticate(@app.app_token, str, params[:signature])
-    end  
-  end
+  def index
 
+    @members = @app.members.all :limit => Settings.apps.members.csv_limit, :order => 'created_at ASC'
+    
+    respond_to do |format|
+      format.csv {
+         csv_string = FasterCSV.generate do |csv|
+          @members.map { |r| CSV_FIELDS.map { |m| r.send m }  }.each { |row| csv << row }
+        end
+        send_data csv_string, :type => "text/plain", 
+                  :filename=> "#{@app.nicename}-#{@members}-#{Time.now.utc.iso8601}.csv",
+                  :disposition => 'inline'
+        
+      }
+    end
+  end
+  
 end

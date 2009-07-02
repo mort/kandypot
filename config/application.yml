@@ -1,8 +1,10 @@
 defaults: &defaults
   apps:
+    notifications_limit: 10
     credentials:
       key_length: 32
-  
+    members:
+      csv_limit: 5000    
 development:
   <<: *defaults
 
