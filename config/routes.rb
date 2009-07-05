@@ -1,5 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :notifications
+  
 
   map.resources :activities
 
@@ -14,6 +14,7 @@ ActionController::Routing::Routes.draw do |map|
 
   map.resources :apps do |app|
     app.resources :members
+    app.resources :notifications
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

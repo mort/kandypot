@@ -37,9 +37,6 @@ describe ActivitiesController, 'create' do
     
     params = {}
     params["member_token"]   = @a[:member_token]
-    params["content_token"]  = @a[:content_token]
-    params["content_type"]   = @a[:content_type]
-    params["content_source"] = @a[:content_source]
     params["activity_type"]  = @a[:activity_type]
     params["activity_at"]    = @a[:activity_at]
     
@@ -89,9 +86,6 @@ describe ActivitiesController, 'create' do
     
     params = {}
     params["member_token"]   = @a[:member_token]
-    params["content_token"]  = @a[:content_token]
-    params["content_type"]   = @a[:content_type]
-    params["content_source"] = @a[:content_source]
     params["activity_type"]  = @a[:activity_type]
     params["activity_at"]    = @a[:activity_at]
     
@@ -114,9 +108,6 @@ describe ActivitiesController, 'create' do
     
     params = {}
     params["member_token"]   = @a[:member_token]
-    params["content_token"]  = @a[:content_token]
-    params["content_type"]   = @a[:content_type]
-    params["content_source"] = @a[:content_source]
     params["activity_type"]  = @a[:activity_type]
     params["activity_at"]    = @a[:activity_at]
     

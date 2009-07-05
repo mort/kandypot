@@ -6,6 +6,7 @@ require 'spec/autorun'
 require 'spec/rails'
 require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 require File.expand_path(File.dirname(__FILE__) + "/be_valid_feed")
+require 'feed_validator/assertions'
 
 Spec::Runner.configure do |config|
   config.mock_with :rr
