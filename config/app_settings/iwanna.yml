@@ -24,11 +24,6 @@ defaults: &defaults
         default: 6
         add: 10
         dm: 5
-    transfers:
-      reaction:
-        default: 3  
-      relationship:
-        default: 3
   percentages:  
     transfers:
       reaction:
