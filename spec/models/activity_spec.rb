@@ -210,16 +210,14 @@ end
     mock(App).find_by_app_token(@a2.app_token){@app} 
 
     mock(@app.settings.probabilities).default {0.7}
-    mock(@app.settings.amounts.deposits.reaction).comment{5}
-    mock(@app.settings.amounts.transfers.reaction).comment{3}  
+    mock(@app.settings.amounts.deposits.reaction).comment{50}
+    mock(@app.settings.percentages.transfers.reaction).comment{10}  
 
-    mock(Trickster).modulate
-
+    mock(Trickster).whim(50, 0.7){50}
     mock(Trickster).whim(5, 0.7){5}
-    mock(Trickster).whim(3, 0.7){3}
 
-    mock.instance_of(Member).do_deposit(5,'reaction_comment')
-    mock.instance_of(Member).do_transfer(3, @m2, 'reaction_comment (received)')
+    mock.instance_of(Member).do_deposit(50,'reaction_comment')
+    mock.instance_of(Member).do_transfer(5, @m2, 'reaction_comment (received)')
 
     @a2.judge
    end    
@@ -233,28 +231,17 @@ end
 
     mock(@app.settings.probabilities).default{0.7}
     mock(@app.settings.amounts.deposits.reaction).default{5}
-    mock(@app.settings.amounts.transfers.reaction).default{3}  
+    mock(@app.settings.percentages.transfers.reaction).default{10}  
 
     mock(Trickster).whim(5, 0.7){5}
-    mock(Trickster).whim(3, 0.7){3}
+    mock(Trickster).whim(1, 0.7){1}
 
-    mock.instance_of(Member).do_deposit(5,"reaction foo")
-    mock.instance_of(Member).do_transfer(3, @m2, 'reaction foo (received)')
+    mock.instance_of(Member).do_deposit(50,"reaction foo")
+    mock.instance_of(Member).do_transfer(1, @m2, 'reaction foo (received)')
 
     @a2.judge
    end
-   
-   it 'should modulate positive reactions up' do
-     pending
-   end
-   
-   it 'should modulate negative reactions down' do
-    pending
-   end
-   
-   
-   
-   
- 
- end
+
+    
+end
  

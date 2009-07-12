@@ -44,11 +44,13 @@ module Kandypot
         # Let's transfer from participant to the content's owner
         sender = member
         recipient = content_owner
-        m =  app.settings.amounts.transfers.reaction.respond_to?(s) ? s : 'default'
+        m =  app.settings.percentages.transfers.reaction.respond_to?(s) ? s : 'default'
       
         p = Trickster::modulate(p, self.mood, self.intensity, app.settings.probabilities.max, app.settings.probabilities.min) unless (self.mood.nil? || self.intensity.nil?)
+                
+        percentage = app.settings.percentages.transfers.reaction.send(m)
+        proposed_transfer_amount = ((amount.to_f*percentage.to_f/100)).ceil
         
-        proposed_transfer_amount = app.settings.amounts.transfers.reaction.send(m)
         transfer_amount = Trickster::whim(proposed_transfer_amount, p)
 
         sender.do_transfer(transfer_amount, recipient, "reaction #{s} (received)") unless transfer_amount.nil?

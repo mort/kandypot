@@ -29,6 +29,10 @@ defaults: &defaults
         default: 3  
       relationship:
         default: 3
+  percentages:  
+    transfers:
+      reaction:
+        default: 10
  
 development:
   <<: *defaults
