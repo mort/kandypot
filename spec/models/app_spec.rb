@@ -91,3 +91,17 @@ describe App, 'app settings' do
   
 
 end
+
+describe App do
+  
+  before do
+    @app = App.make(:nicename => 'iwanna')
+  end
+  
+  
+  it 'should update kandy cache for all members' do
+    mock.instance_of(Member).update_kandy_cache
+    @app.update_members_kandy_cache
+  end
+  
+end

@@ -60,13 +60,7 @@ class Member < ActiveRecord::Base
     recipient.transfers.create(:operation_type => 'transfer', :amount => amount, :subject => subject, :sender => self)
     
   end
-  
-  def self.update_every_kandy_cache
-    Member.all.each do |member|
-      member.update_kandy_cache
-    end
-  end
-  
+    
   def update_kandy_cache
     kc = self.kandies.count
     self.update_attribute(:kandies_count, kc)

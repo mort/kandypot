@@ -63,6 +63,12 @@ class App < ActiveRecord::Base
     @settings ||= (self.has_settings? ? Settings.new(settings_filepath) : Settings.new(App.default_settings_path))
   end
   
+  def update_members_kandy_cache
+    members.all.each do |member|
+      member.update_kandy_cache
+    end
+    self.update_attribute(:updated_at, Time.now)
+  end
   
   private
   

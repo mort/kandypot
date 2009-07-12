@@ -97,11 +97,6 @@ describe Member, 'kandy cache' do
       @member.update_kandy_cache
     }.should change(@member, :kandies_count).by(50)
   end
-  
-  it 'should be updatable for all members' do
-    mock.instance_of(Member).update_kandy_cache
-    Member.update_every_kandy_cache
-  end
-  
+    
 
 end
