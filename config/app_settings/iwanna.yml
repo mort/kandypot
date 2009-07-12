@@ -7,7 +7,7 @@ defaults: &defaults
       initial: 1
   amounts:
     deposits:
-      initial: 20
+      welcome: 20
       creation:
         default: 10
         place: 20

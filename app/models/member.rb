@@ -42,6 +42,10 @@ class Member < ActiveRecord::Base
   has_many :sent_transfers, :class_name => 'OperationLog', :foreign_key => 'sender_id', :conditions => ['operation_type = ?', 'transfer']
 
 
+  after_create do |member|
+    member.send_later(:do_welcome_deposit)
+  end  
+
   def do_deposit(amount, subject)
     return false unless amount > 0
     amount.times { self.kandies.create }
@@ -64,6 +68,12 @@ class Member < ActiveRecord::Base
   def update_kandy_cache
     kc = self.kandies.count
     self.update_attribute(:kandies_count, kc)
+  end
+  
+    
+  def do_welcome_deposit
+    amount = self.app.settings.amounts.deposits.welcome
+    do_deposit(amount, 'Welcome deposit')
   end
 
 end
