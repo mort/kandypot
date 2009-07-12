@@ -1,6 +1,8 @@
 defaults: &defaults
   probabilities:
-    default: 0.7
+    default: 0.5
+    max: 0.95
+    min: 0.5
     deposits:
       initial: 1
   amounts:

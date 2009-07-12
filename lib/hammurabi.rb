@@ -37,6 +37,7 @@ module Kandypot
       
       
       amount = Trickster::whim(proposed_amount, p)
+      
       unless amount.nil?
         member.do_deposit(amount, "reaction #{s}")
 
@@ -44,6 +45,8 @@ module Kandypot
         sender = member
         recipient = content_owner
         m =  app.settings.amounts.transfers.reaction.respond_to?(s) ? s : 'default'
+      
+        p = Trickster::modulate(p, self.mood, self.intensity, app.settings.probabilities.max, app.settings.probabilities.min) unless (self.mood.nil? || self.intensity.nil?)
         
         proposed_transfer_amount = app.settings.amounts.transfers.reaction.send(m)
         transfer_amount = Trickster::whim(proposed_transfer_amount, p)
@@ -52,8 +55,6 @@ module Kandypot
       end
     end
 
-  
-    
   end
 
   module Exceptions
@@ -62,8 +63,21 @@ module Kandypot
 end
 
 class Trickster
-  def self.whim(i,p = 0.8)
+  def self.whim(i, p = 0.8)
     (rand < p) ? i : nil
+  end
+  
+  def self.modulate(p, mood, intensity, max, min)
+     
+     op = (mood == 'negative') ? '-' : '+'
+     i = (Math::log10(intensity)/2)
+     
+     p = p.to_f.send(op, i) 
+
+     p =  sprintf("%.2f", p).to_f
+     
+     return (p > max) ? max : ((p < min) ? min : p)
+     
   end
 end
 

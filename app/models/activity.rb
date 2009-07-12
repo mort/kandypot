@@ -27,10 +27,17 @@ class Activity < ActiveRecord::Base
   
   ACTIVITY_TYPES = ['creation', 'reaction', 'relationship']
   SIGNATURE_PARAMS = [:member_token, :activity_type, :activity_at]
+  MOOD_TYPES = ['positive', 'negative', 'neutral']
+  
   
   # common
   validates_presence_of :app_token, :signature, :member_token, :activity_type, :ip, :activity_at
   validates_inclusion_of :activity_type, :in => ACTIVITY_TYPES
+  
+  
+  # mood and intensity in reactions (for @limalimon)
+  validates_inclusion_of :mood, :in => MOOD_TYPES, :allow_nil => true, :if => Proc.new {|act| act.activity_type == 'reaction'}
+  validates_numericality_of :intensity, :allow_nil => true, :if => Proc.new {|act| act.activity_type == 'reaction'}
 
   # reaction and relationship attrs
   validates_presence_of :member_b_token, :category, :if => Proc.new {|act| %w(reaction relationship).include?(act.activity_type) }

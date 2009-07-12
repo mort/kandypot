@@ -213,6 +213,8 @@ end
     mock(@app.settings.amounts.deposits.reaction).comment{5}
     mock(@app.settings.amounts.transfers.reaction).comment{3}  
 
+    mock(Trickster).modulate
+
     mock(Trickster).whim(5, 0.7){5}
     mock(Trickster).whim(3, 0.7){3}
 
@@ -229,7 +231,7 @@ end
  
     mock(App).find_by_app_token(@a2.app_token){@app} 
 
-    mock(@app.settings.probabilities).default {0.7}
+    mock(@app.settings.probabilities).default{0.7}
     mock(@app.settings.amounts.deposits.reaction).default{5}
     mock(@app.settings.amounts.transfers.reaction).default{3}  
 
@@ -242,7 +244,13 @@ end
     @a2.judge
    end
    
+   it 'should modulate positive reactions up' do
+     pending
+   end
    
+   it 'should modulate negative reactions down' do
+    pending
+   end
    
    
    
