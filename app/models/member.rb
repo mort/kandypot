@@ -42,9 +42,11 @@ class Member < ActiveRecord::Base
   has_many :sent_transfers, :class_name => 'OperationLog', :foreign_key => 'sender_id', :conditions => ['operation_type = ?', 'transfer']
 
 
-  after_create do |member|
-    member.send_later(:do_welcome_deposit)
-  end  
+  #after_create do |member|
+   # member.send_later(:do_welcome_deposit)
+  #end
+  
+  after_create :do_welcome_deposit  
 
   def do_deposit(amount, subject)
     return false unless amount > 0
