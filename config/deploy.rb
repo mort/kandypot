@@ -46,7 +46,7 @@ role :mirror,   soviet, { :no_release => true }
 #####################
 
 before "deploy:update_code", :update_mirror
-after  "deploy:update_code", :run_migrations, :link_database_config
+after  "deploy:update_code", :link_database_config, :run_migrations
 after  "deploy:update", "deploy:cleanup"
 
 
