@@ -16,6 +16,7 @@ set :scm,         :git
 set :branch,      "master"
 set :scm_verbose, false    # para depurar
 set :scm_user,    'deploys'
+set :git_enable_submodules, 1
 
 #####################
 # FORMA DE DEPLOYAR #
