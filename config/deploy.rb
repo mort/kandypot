@@ -54,7 +54,7 @@ after  "deploy:update", "deploy:cleanup"
 ##  TAREAS   ##
 ###############
 task :update_mirror, :roles => [:mirror] do
-  run "cd /var/opt/git/#{application}/ && git pull #{ scm_verbose ? "-q" : "" } origin #{branch}"
+  run "cd /var/opt/git/kandypot/ && git fetch"
 end
 
 desc "Restart Application"
