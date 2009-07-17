@@ -39,6 +39,7 @@ role :web,      kandypot
 role :app,      kandypot
 role :migrator, kandypot
 role :db,       kandypot, { :primary => true }
+role :mirror,   soviet, { :no_release => true }
 
 #####################
 ## PERSONALIZACIÓN ##
