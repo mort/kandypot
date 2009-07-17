@@ -45,7 +45,7 @@ role :db,       kandypot, { :primary => true }
 #####################
 
 before "deploy:update_code", :update_mirror
-after  "deploy:update_code", :run_migrations
+after  "deploy:update_code", :run_migrations, :link_database_config
 after  "deploy:update", "deploy:cleanup"
 
 
@@ -70,3 +70,7 @@ task :run_migrations, :roles => :migrator do
   CMD
 end
 
+desc "Link the database yaml config"
+task :link_database_config, :roles => [:app] do
+  run "ln -s #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+end
