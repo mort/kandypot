@@ -49,6 +49,7 @@ role :mirror,   soviet, { :no_release => true }
 before "deploy:update_code", :update_mirror
 after  "deploy:update_code", :link_database_config, :run_migrations
 after  "deploy:update", "deploy:cleanup"
+after "deploy:symlink", "deploy:update_crontab"
 
 
 ###############
@@ -75,4 +76,13 @@ end
 desc "Link the database yaml config"
 task :link_database_config, :roles => [:app] do
   run "ln -s #{shared_path}/config/database.yml #{release_path}/config/database.yml"
+end
+
+# Whenever gem
+
+namespace :deploy do
+  desc "Update the crontab file"
+  task :update_crontab, :roles => :db do
+    run "cd #{release_path} && whenever --update-crontab #{application}"
+  end
 end
