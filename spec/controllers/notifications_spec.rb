@@ -3,11 +3,12 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe NotificationsController, 'get' do
   before do
     @app = App.make
-    10.times { Notification.make(:app => @app) }
-    d = Time.now.midnight.utc.iso8601
-    str = Digest::SHA1.hexdigest(d)    
-    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, str)
-    get :index, :app_id => @app.id, :format => 'atom', :signature => signature
+    2.times { Notification.make(:app => @app) }    
+    
+    params = sign_request(@app)
+
+    get :index, {:app_id => @app.id, :format => 'atom'}.merge(params) 
+    
   end
   
   it 'should respond with success' do  

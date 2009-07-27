@@ -3,23 +3,19 @@ class MembersController < ApplicationController
   CSV_FIELDS = %w(member_token kandies_count updated_at)
   
   def show
-    
-    
+    logger.info("params id es #{params[:id]} #{params.inspect}" )
     @member = @app.members.find_by_member_token(params[:id])
     
-    if stale?(:last_modified => @member.updated_at.utc, :etag => @member)    
-      if @member
-        render :json => {:member_token => @member.member_token, :kandies_count => @member.kandies_count}, :status => :ok
-      else
-        render :text => '', :status => :not_found  
-      end
+    if @member     
+      render :json => {:member_token => @member.member_token, :kandies_count => @member.kandies_count}, :status => :ok if stale?(:last_modified => @member.updated_at.utc, :etag => @member)
+    else
+      render :text => '', :status => :not_found  
     end
   end
   
   def index
 
     @members = @app.members.all :limit => Settings.apps.members.csv_limit, :order => 'created_at ASC'
-    
     
     if stale?(:last_modified => @app.updated_at.utc, :etag => @app)    
       respond_to do |format|

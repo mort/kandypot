@@ -30,35 +30,6 @@ describe App, 'credendials and authentication' do
     App.pack_up_params_for_signature(params).class.should == String
   end
 
-  it "should authenticate with valid credentials" do
-    
-    data = 'loremipsum'
-    stub(App).pack_up_params_for_signature(:foo => 'bar', :wadus => 'raur'){data}
-    
-    app_key = @app.app_key
-    app_token = @app.app_token
-    
-    signature = HMAC::SHA1.hexdigest(app_key, data)
-    
-    App.authenticate(app_token, data, signature).should be_true
-  end
-  
-  
-  it "should not authenticate with invalid credentials" do
-    
-    data = 'loremipsum'
-    stub(App).pack_up_params_for_signature(:foo => 'bar', :wadus => 'raur'){data}
-    
-    app_key = @app.app_key
-    app_token = @app.app_token
-    
-    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app_key, data) 
-    
-    App.authenticate(app_token, 'wadus', signature).should be_false
-    App.authenticate(app_token, data, 'wadus').should be_false
-  end
-  
-  
 end
 
 

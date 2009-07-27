@@ -1,7 +1,6 @@
 module Kandypot
   module Hammurabi
     def judge
-      app = App.find_by_app_token(self.app_token)     
       member = app.members.find_or_create_by_member_token(self.member_token)
       p = app.settings.probabilities.default
       
@@ -10,7 +9,6 @@ module Kandypot
       if self.respond_to?(method_name)
         self.send(method_name.to_sym, app, member, p) 
       else  
-         #puts "judge_#{self.activity_type}"
         raise Kandypot::Exceptions::UnknownActivity, method_name
       end
     end
@@ -82,8 +80,3 @@ class Trickster
      
   end
 end
-
-
-
-
-

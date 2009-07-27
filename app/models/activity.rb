@@ -29,9 +29,10 @@ class Activity < ActiveRecord::Base
   SIGNATURE_PARAMS = [:member_token, :activity_type, :activity_at]
   MOOD_TYPES = ['positive', 'negative', 'neutral']
   
+  belongs_to :app
   
   # common
-  validates_presence_of :app_token, :signature, :member_token, :activity_type, :ip, :activity_at
+  validates_presence_of  :member_token, :activity_type, :ip, :activity_at
   validates_inclusion_of :activity_type, :in => ACTIVITY_TYPES
   
   
@@ -45,14 +46,13 @@ class Activity < ActiveRecord::Base
   # creation and reaction attrs
   validates_presence_of :content_token, :content_type, :content_source, :if => Proc.new {|act| %w(reaction creation).include?(act.activity_type) }
 
-  
-  validate :authenticated?
+  #validate :authenticated?
   
   after_create do |activity|
     activity.send_later(:judge)
   end
   
-    
+=begin    
   def authenticated?
     signature_params = self.attributes.reject {|k,v| !SIGNATURE_PARAMS.include?(k.to_sym)}
     packed_signature_params = App.pack_up_params_for_signature(signature_params)
@@ -60,5 +60,6 @@ class Activity < ActiveRecord::Base
     self.errors.add(:authentication, 'Bad credentials') unless auth 
     return auth
   end
+=end
   
 end

@@ -20,9 +20,15 @@ end
 describe MembersController, 'get /member' do
   before do
     @member = Member.make(:kandies_count => 20)
-    str =  Digest::SHA1.hexdigest(Time.now.midnight.utc.iso8601)
+    
+    par = {'app_token' => @member.app.app_token, 'date_scope' => Time.now.midnight.utc.iso8601}
+    par_str = par.sort.map{|j| j.join('=')}.join('&')
+    str = Digest::SHA1.hexdigest(par_str)
     signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @member.app.app_key, str)
-    get :show, :id => @member.member_token, :app_id => @member.app.id, :signature => signature
+    
+    params = sign_request(@member.app)
+    
+    get :show,  {:id => @member.member_token, :app_id => @member.app.id}.merge(params)
   end
   
   it 'should respond with success' do  
@@ -53,9 +59,10 @@ describe MembersController, 'get /members' do
   before do
     @app = App.make
     10.times { Member.make(:app => @app) }
-    str =  Digest::SHA1.hexdigest(Time.now.midnight.utc.iso8601)
-    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, str)
-    get :index, :app_id => @app.id, :signature => signature, :format => 'csv'
+    
+    params = sign_request(@app)
+    
+    get :index, {:app_id => @app.id, :format => 'csv'}.merge(params)
   end
   
   it 'should respond with success' do  

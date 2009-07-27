@@ -6,130 +6,45 @@ describe ActivitiesController, 'create' do
   end
   
   it "should respond 201 on creation" do
+    @a = Activity.plan(:app => @app)
+            
+    options = @a.dup
+                
+    #mock(Activity).new(@a){@activity}
+    #mock(@activity).save{true}
     
-    @a = Activity.plan(:app_token => @app.app_token)
+    options.delete(:ip)    
+    options.delete(:app_token)
+    app_id = options.delete(:app_id)
     
-    params = {}
-    params["member_token"]   = @a[:member_token]
-    params["activity_type"]  = @a[:activity_type]
-    params["activity_at"]    = @a[:activity_at]
+    params = sign_request(@app, options)
     
-    s = Digest::SHA1.hexdigest(params.to_s)   
+    post :create, @a.merge(params)
     
-    @a[:signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, s)
-    
-    @activity = {}
-    @a.each do |k,v|
-      @activity[k.to_s] = v
-    end
-    
-    mock(Activity).new(@activity){@activity}
-    mock(@activity).save{true}
-
-    post :create, @a
     response.response_code.should == 201
   end
   
   
   it "should respond 403 on bad signature" do
-    
-    @a = Activity.plan(:app_token => @app.app_token)
-    
-    params = {}
-    params["member_token"]   = @a[:member_token]
-    params["activity_type"]  = @a[:activity_type]
-    params["activity_at"]    = @a[:activity_at]
-    
-    s = Digest::SHA1.hexdigest(params.to_s)   
-    
-    @a[:signature] = 'foo'
-    
-    @activity = {}
-    @a.each do |k,v|
-      @activity[k.to_s] = v
-    end
-    
-    post :create, @a
-    response.response_code.should == 403
-  end
-  
-  
-  it "should respond 403 on bad app token" do
-    
-    @a = Activity.plan(:app_token => 'foo')
-    
-    params = {}
-    params["member_token"]   = @a[:member_token]
-    params["content_token"]  = @a[:content_token]
-    params["content_type"]   = @a[:content_type]
-    params["content_source"] = @a[:content_source]
-    params["activity_type"]  = @a[:activity_type]
-    params["activity_at"]    = @a[:activity_at]
-    
-    s = Digest::SHA1.hexdigest(params.to_s)   
-    
-    @a[:signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, s)
-    
-    @activity = {}
-    @a.each do |k,v|
-      @activity[k.to_s] = v
-    end
-    
-    post :create, @a
-    response.response_code.should == 403
-  end
-  
-  
-  it "should respond 403 on bad app token" do
-    
-    @a = Activity.plan(:app_token => 'foo')
-    
-    params = {}
-    params["member_token"]   = @a[:member_token]
-    params["activity_type"]  = @a[:activity_type]
-    params["activity_at"]    = @a[:activity_at]
-    
-    s = Digest::SHA1.hexdigest(params.to_s)   
-    
-    @a[:signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, s)
-    
-    @activity = {}
-    @a.each do |k,v|
-      @activity[k.to_s] = v
-    end
-    
-    post :create, @a
-    response.response_code.should == 403
-  end
-  
-  it "should respond 400 on missing params" do
-    
-    @a = Activity.plan(:app_token => @app.app_token)
-    
-    params = {}
-    params["member_token"]   = @a[:member_token]
-    params["activity_type"]  = @a[:activity_type]
-    params["activity_at"]    = @a[:activity_at]
-    
-    s = Digest::SHA1.hexdigest(params.to_s)   
-    
-    @a[:signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @app.app_key, s)
-    
-    @a.delete(:activity_type)
+    @a = Activity.plan(:app => @app)
+    options = @a.dup
 
-    @activity = {}
-    @a.each do |k,v|
-      @activity[k.to_s] = v
-    end
-    
-    #mock(Activity).new(@activity){@activity}
-    #mock(@activity).save{false}
+    #mock(Activity).new(@a){@activity}
+    #mock(@activity).save{true}
 
-    post :create, @a
-    response.response_code.should == 400
+    options.delete(:ip)    
+    options.delete(:app_token)
+    app_id = options.delete(:app_id)
+
+    params = sign_request(@app, options)
+    params[:signature] = 'foo'
+    
+    post :create, @a.merge(params)
+    
+    response.response_code.should == 403
   end
   
-  
+
   
   
 end

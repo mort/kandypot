@@ -87,15 +87,15 @@ describe Member, 'doing a transfer' do
 end  
 
 describe Member, 'kandy cache' do
-  before do
-    @member = Member.make
-  end
+
   
   it 'should be updatable per member' do
+    @member = Member.make
+    
     lambda{
       @member.do_deposit(50, 'foo')
       @member.update_kandy_cache
-    }.should change(@member, :kandies_count).by(50)
+    }.should change(@member, :kandies_count).by(52)
   end
     
 

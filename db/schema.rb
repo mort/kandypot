@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090711160856) do
+ActiveRecord::Schema.define(:version => 20090712225052) do
 
   create_table "activities", :force => true do |t|
     t.string   "app_token"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(:version => 20090711160856) do
     t.string   "category"
     t.string   "mood",               :limit => 100
     t.integer  "intensity",          :limit => 2
+    t.integer  "app_id",                            :null => false
   end
 
   create_table "apps", :force => true do |t|

@@ -31,18 +31,14 @@ class App < ActiveRecord::Base
   
   has_many :members
   has_many :notifications, :order => 'created_at DESC'
+  has_many :activities
   
   def self.default_settings_path
     [App::SETTINGS_BASE_PATH, "default.yml"].join('/')
   end
   
-  def self.authenticate(app_token, data, signature)
-    app = App.find_by_app_token(app_token)
-    if app
-      (OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, data)  == signature)
-    else
-      return false
-    end
+  def authenticate(data, signature)
+    OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, self.app_key, data)  == signature
   end
   
   def self.pack_up_params_for_signature(params) 
@@ -70,6 +66,7 @@ class App < ActiveRecord::Base
     self.update_attribute(:updated_at, Time.now)
   end
   
+    
   private
   
   def generate_credentials

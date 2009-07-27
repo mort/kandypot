@@ -37,8 +37,7 @@ KandyOwnership.blueprint do
 end
 
 Activity.blueprint do
-  app_token 
-  signature
+  app
   member_token
   content_token
   activity_type { 'creation' }
@@ -49,8 +48,7 @@ Activity.blueprint do
 end
 
 Activity.blueprint(:reaction) do
-  app_token
-  signature
+  app
   member_token
   member_b_token
   content_token
@@ -63,8 +61,7 @@ Activity.blueprint(:reaction) do
 end
 
 Activity.blueprint(:relationship) do
-  app_token
-  signature
+  app
   member_token
   member_b_token
   content_token
@@ -73,7 +70,6 @@ Activity.blueprint(:relationship) do
   ip { '127.0.0.1' }
   activity_at { Time.now }
 end
-
 
 
 Notification.blueprint do

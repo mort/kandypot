@@ -7,10 +7,32 @@ require 'spec/rails'
 require File.expand_path(File.dirname(__FILE__) + "/blueprints")
 require File.expand_path(File.dirname(__FILE__) + "/be_valid_feed")
 require 'feed_validator/assertions'
+require 'logger'
+
+
+def sign_request(app, options = {})
+  logger = Logger.new(File.expand_path(File.dirname(__FILE__) + "/../log/test.log"))
+  logger.info("options #{options.inspect}")
+  params = options.stringify_keys.merge({'date_scope' => Time.now.midnight.utc.iso8601})
+  par_str = params.sort.map{|j| j.join('=')}.join('&')
+  str = Digest::SHA1.hexdigest(par_str)
+  
+  signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, str)
+  logger.info("1 - #{params.inspect} par_str: #{par_str} str: #{str} signature: #{signature}")
+  
+  return {:signature => signature}
+end
+
 
 Spec::Runner.configure do |config|
   config.mock_with :rr
   config.before(:each) { Sham.reset }
+  
+  config.before(:each) do
+    full_example_description = "Starting #{self.class.description} #{@method_name}"
+    RAILS_DEFAULT_LOGGER.info("\n\n#{full_example_description}\n#{'-' * (full_example_description.length)}")
+  end
+  
   
   # If you're not using ActiveRecord you should remove these
   # lines, delete config/database.yml and disable :active_record
@@ -53,16 +75,4 @@ Spec::Runner.configure do |config|
 end
 
 
-def sign_n_make(a, app)  
-  params = {}
-  params["member_token"]   = a[:member_token]
-  params["activity_type"]  = a[:activity_type]
-  params["activity_at"]    = a[:activity_at]
 
-  s = Digest::SHA1.hexdigest(params.to_s)   
-
-  a[:signature] = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, app.app_key, s)
-  mock(App).pack_up_params_for_signature(params){ s }
-  mock(App).authenticate(a[:app_token], s, a[:signature]){true}
-  return Activity.make(a)
-end

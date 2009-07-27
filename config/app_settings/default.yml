@@ -7,7 +7,7 @@ defaults: &defaults
       initial: 1
   amounts:
     deposits:
-      welcome: 20
+      welcome: 2
       creation:
         default: 10
       reaction:  

@@ -1,10 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
-  
-
-  map.resources :activities
-
- 
- 
+   
  # These resources are created but we don't wanna to expose them to the world (yet)
 
  # map.resources :operation_logs
@@ -13,6 +8,7 @@ ActionController::Routing::Routes.draw do |map|
 
 
   map.resources :apps do |app|
+    app.resources :activities
     app.resources :members
     app.resources :notifications
   end
