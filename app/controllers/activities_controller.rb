@@ -5,11 +5,11 @@ class ActivitiesController < ApplicationController
     params.delete_if{|k,v| !Activity.column_names.include?(k) }
     @activity = @app.activities.build(params)
     if @activity.save
-      render :json => @activity.to_json, :status => :created
-    elsif @activity.errors.size > 1
-      render :json => @activity.errors.to_json, :status => :bad_request    
+      render :json => @activity.to_json, :status => :created 
     elsif @activity.errors.on(:authentication)
       render :text => '', :status => :forbidden
+    else
+      render :json => @activity.errors.to_json, :status => :bad_request  
     end
   end
 
