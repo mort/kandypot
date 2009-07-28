@@ -34,5 +34,6 @@ config.gem "rspec", :lib => false, :version => ">= 1.2.6", :source => 'http://ge
 config.gem "rspec-rails", :lib => false, :version => ">= 1.2.6", :source => 'http://gems.github.com'
 config.gem 'aslakhellesoy-cucumber', :lib => false, :version => ">= 0.3.11", :source => 'http://gems.github.com'
 config.gem 'webrat', :lib => false
+config.gem 'feedvalidator', :lib => 'feed_validator'
 
 config.cache_classes = false
