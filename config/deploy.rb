@@ -50,7 +50,6 @@ before "deploy:update_code", :update_mirror
 after  "deploy:update_code", :link_database_config, :run_migrations
 after  "deploy:update", "deploy:cleanup"
 after  "deploy:symlink", "deploy:update_crontab"
-after "deploy:restart", :restart_job_runner
 
 ###############
 ##  TAREAS   ##
@@ -76,15 +75,6 @@ end
 desc "Link the database yaml config"
 task :link_database_config, :roles => [:app] do
   run "ln -s #{shared_path}/config/database.yml #{release_path}/config/database.yml"
-end
-
-desc "Start delayed_job workers"
-task :restart_job_runner, :roles => [:app] do
- run <<-CMD 
-  cd #{release_path} 
-  script/job_runner stop 
-  script/job_runner start"
- CMD
 end
 
 namespace :deploy do
