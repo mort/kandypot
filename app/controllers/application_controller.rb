@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
       par_str = my_params.sort.map{|j| j.join('=')}.join('&')
       str = Digest::SHA1.hexdigest(par_str)
 
-      logger.info("2 - #{my_params.inspect} par_str:#{par_str} str: #{str}  signature: #{params[:signature]}")          
+      #logger.info("2 - #{my_params.inspect} par_str:#{par_str} str: #{str}  signature: #{params[:signature]}")          
 
       render :text => '', :status => :forbidden unless @app.authenticate(str, params[:signature])
                 
@@ -43,7 +43,7 @@ class ApplicationController < ActionController::Base
       my_params.delete(k)
     end
     
-    logger.info("Params auth #{my_params.inspect}")
+    #logger.info("Params auth #{my_params.inspect}")
     return my_params
   end
   
