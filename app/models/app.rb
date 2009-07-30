@@ -27,11 +27,19 @@ class App < ActiveRecord::Base
   validates_presence_of :name, :nicename, :app_key, :app_token
   validates_uniqueness_of :name, :nicename, :app_key, :app_token
   
+  validates_subdomain_format_of :nicename
+  validates_subdomain_not_reserved :nicename
+  
+  
   before_validation :generate_credentials
   
   has_many :members
   has_many :notifications, :order => 'created_at DESC'
   has_many :activities
+  
+  def to_param
+     nicename
+   end
   
   def self.default_settings_path
     [App::SETTINGS_BASE_PATH, "default.yml"].join('/')

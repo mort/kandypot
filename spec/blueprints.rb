@@ -7,7 +7,7 @@ Sham.name  { Faker::Name.name }
 Sham.email { Faker::Internet.email }
 Sham.title { Faker::Lorem.sentence }
 Sham.body  { Faker::Lorem.paragraph }
-Sham.nicename { Faker::Lorem.words(1) }
+Sham.nicename { Faker::Lorem.words(1)[0] }
 Sham.member_token { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }
 Sham.app_token { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }
 Sham.signature { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }

@@ -13,7 +13,7 @@ class ApplicationController < ActionController::Base
   
   def require_app
     
-    @app = App.find_by_id params[:app_id]
+    @app = App.find_by_nicename params[:app_id]
 
     unless @app.nil?   
       my_params = params.dup
@@ -24,8 +24,6 @@ class ApplicationController < ActionController::Base
       par_str = my_params.sort.map{|j| j.join('=')}.join('&')
       str = Digest::SHA1.hexdigest(par_str)
 
-      #logger.info("2 - #{my_params.inspect} par_str:#{par_str} str: #{str}  signature: #{params[:signature]}")          
-
       render :text => '', :status => :forbidden unless @app.authenticate(str, params[:signature])
                 
     else
@@ -35,7 +33,7 @@ class ApplicationController < ActionController::Base
   
   def clean_params(my_params)
 
-    %w(signature format ip).each do |p|
+    %w(signature format ip app_id).each do |p|
       my_params.delete(p)
     end
     
@@ -43,7 +41,6 @@ class ApplicationController < ActionController::Base
       my_params.delete(k)
     end
     
-    #logger.info("Params auth #{my_params.inspect}")
     return my_params
   end
   

@@ -11,7 +11,7 @@ describe MembersController, 'get' do
   end
 
   it 'should respond with forbidden to no signature' do
-    get :show, :id => @member.member_token, :app_id => @member.app.id
+    get :show, :id => @member.member_token, :app_id => @member.app.nicename
     response.response_code.should == 403
   end  
   
@@ -28,7 +28,7 @@ describe MembersController, 'get /member' do
     
     params = sign_request(@member.app)
     
-    get :show,  {:id => @member.member_token, :app_id => @member.app.id}.merge(params)
+    get :show,  {:id => @member.member_token, :app_id => @member.app.nicename}.merge(params)
   end
   
   it 'should respond with success' do  
@@ -62,7 +62,7 @@ describe MembersController, 'get /members' do
     
     params = sign_request(@app)
     
-    get :index, {:app_id => @app.id, :format => 'csv'}.merge(params)
+    get :index, {:app_id => @app.nicename, :format => 'csv'}.merge(params)
   end
   
   it 'should respond with success' do  

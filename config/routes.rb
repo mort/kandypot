@@ -6,11 +6,12 @@ ActionController::Routing::Routes.draw do |map|
  # map.resources :kandy_ownerships
  # map.resources :kandies
 
-
-  map.resources :apps do |app|
+  map.subdomain :model => :app do |app|
+  #map.resources :apps do |app|
     app.resources :activities
     app.resources :members
     app.resources :notifications
+  #end
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

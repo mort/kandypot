@@ -7,6 +7,7 @@ describe ActivitiesController, 'create' do
   
   it "should respond 201 on creation" do
     @a = Activity.plan(:app => @app)
+    @a[:app_id] = @app.nicename        
             
     options = @a.dup
                 
@@ -27,10 +28,9 @@ describe ActivitiesController, 'create' do
   
   it "should respond 403 on bad signature" do
     @a = Activity.plan(:app => @app)
+    @a[:app_id] = @app.nicename        
+    
     options = @a.dup
-
-    #mock(Activity).new(@a){@activity}
-    #mock(@activity).save{true}
 
     options.delete(:ip)    
     options.delete(:app_token)

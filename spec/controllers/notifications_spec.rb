@@ -7,7 +7,7 @@ describe NotificationsController, 'get' do
     
     params = sign_request(@app)
 
-    get :index, {:app_id => @app.id, :format => 'atom'}.merge(params) 
+    get :index, {:app_id => @app.nicename, :format => 'atom'}.merge(params) 
     
   end
   

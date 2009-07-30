@@ -1,0 +1,91 @@
+--- !ruby/object:Gem::Specification 
+name: mholling-subdomain_routes
+version: !ruby/object:Gem::Version 
+  version: 0.2.3
+platform: ruby
+authors: 
+- Matthew Hollingworth
+autorequire: 
+bindir: bin
+cert_chain: []
+
+date: 2009-07-28 00:00:00 +02:00
+default_executable: 
+dependencies: 
+- !ruby/object:Gem::Dependency 
+  name: actionpack
+  type: :runtime
+  version_requirement: 
+  version_requirements: !ruby/object:Gem::Requirement 
+    requirements: 
+    - - ">="
+      - !ruby/object:Gem::Version 
+        version: 2.2.1
+    version: 
+description: SubdomainRoutes add subdomain conditions to the Rails routing system. Routes may be restricted to one or many specified subdomains. An URL will be recognised only if the host subdomain matches the subdomain specified in the route. Route generation is also enhanced, so that the subdomain of a generated URL (or path) will be changed if the requested route has a different subdomain to that of the current request. Model-based subdomain routes can also be defined.
+email: mdholling@gmail.com
+executables: []
+
+extensions: []
+
+extra_rdoc_files: 
+- LICENSE
+- README.textile
+files: 
+- LICENSE
+- README.textile
+- Rakefile
+- VERSION.yml
+- lib/subdomain_routes.rb
+- lib/subdomain_routes/config.rb
+- lib/subdomain_routes/mapper.rb
+- lib/subdomain_routes/request.rb
+- lib/subdomain_routes/resources.rb
+- lib/subdomain_routes/routes.rb
+- lib/subdomain_routes/split_host.rb
+- lib/subdomain_routes/url_writer.rb
+- lib/subdomain_routes/validations.rb
+- rails/init.rb
+- spec/extraction_spec.rb
+- spec/recognition_spec.rb
+- spec/resources_spec.rb
+- spec/routes_spec.rb
+- spec/spec_helper.rb
+- spec/url_writing_spec.rb
+- spec/validations_spec.rb
+has_rdoc: true
+homepage: http://github.com/mholling/subdomain_routes
+licenses: []
+
+post_install_message: 
+rdoc_options: 
+- --charset=UTF-8
+require_paths: 
+- lib
+required_ruby_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+required_rubygems_version: !ruby/object:Gem::Requirement 
+  requirements: 
+  - - ">="
+    - !ruby/object:Gem::Version 
+      version: "0"
+  version: 
+requirements: []
+
+rubyforge_project: 
+rubygems_version: 1.3.3
+signing_key: 
+specification_version: 2
+summary: A Rails library for incorporating subdomains into route generation and recognition.
+test_files: 
+- spec/extraction_spec.rb
+- spec/recognition_spec.rb
+- spec/resources_spec.rb
+- spec/routes_spec.rb
+- spec/spec_helper.rb
+- spec/url_writing_spec.rb
+- spec/validations_spec.rb
