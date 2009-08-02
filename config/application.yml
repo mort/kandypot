@@ -1,4 +1,6 @@
 defaults: &defaults
+  auth:
+    realm: Kandypot
   apps:
     notifications_limit: 10
     credentials:

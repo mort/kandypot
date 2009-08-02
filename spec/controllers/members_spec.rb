@@ -6,13 +6,15 @@ describe MembersController, 'get' do
   end
   
   it 'should respond with not found to a bad app id' do
-    get :show, :id => @member.member_token, :app_id => 'foo'
+    authenticate_with_http_digest(@member.app.app_key, @member.app.app_token, 'Kandypot')    
+    
+    get :show, :id => @member.member_token, :app_id => 'foo', :subdomains => :app_id
     response.response_code.should == 404
   end
 
-  it 'should respond with forbidden to no signature' do
-    get :show, :id => @member.member_token, :app_id => @member.app.nicename
-    response.response_code.should == 403
+  it 'should respond with forbidden to no authentication' do
+    get :show, :id => @member.member_token, :app_id => @member.app.nicename, :subdomains => :app_id
+    response.response_code.should == 401
   end  
   
 end
@@ -21,14 +23,10 @@ describe MembersController, 'get /member' do
   before do
     @member = Member.make(:kandies_count => 20)
     
-    par = {'app_token' => @member.app.app_token, 'date_scope' => Time.now.midnight.utc.iso8601}
-    par_str = par.sort.map{|j| j.join('=')}.join('&')
-    str = Digest::SHA1.hexdigest(par_str)
-    signature = OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, @member.app.app_key, str)
+  
+    authenticate_with_http_digest(@member.app.app_key, @member.app.app_token, 'Kandypot')    
     
-    params = sign_request(@member.app)
-    
-    get :show,  {:id => @member.member_token, :app_id => @member.app.nicename}.merge(params)
+    get :show,  {:id => @member.member_token, :app_id => @member.app.nicename, :subdomains => :app_id}
   end
   
   it 'should respond with success' do  
@@ -60,9 +58,9 @@ describe MembersController, 'get /members' do
     @app = App.make
     10.times { Member.make(:app => @app) }
     
-    params = sign_request(@app)
+    authenticate_with_http_digest(@app.app_key, @app.app_token, 'Kandypot')    
     
-    get :index, {:app_id => @app.nicename, :format => 'csv'}.merge(params)
+    get :index, :app_id => @app.nicename, :format => 'csv', :subdomains => :app_id
   end
   
   it 'should respond with success' do  

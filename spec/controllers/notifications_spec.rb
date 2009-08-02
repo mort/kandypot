@@ -5,9 +5,9 @@ describe NotificationsController, 'get' do
     @app = App.make
     2.times { Notification.make(:app => @app) }    
     
-    params = sign_request(@app)
-
-    get :index, {:app_id => @app.nicename, :format => 'atom'}.merge(params) 
+    authenticate_with_http_digest(@app.app_key, @app.app_token, 'Kandypot')    
+    
+    get :index, :app_id => @app.nicename, :format => 'atom', :subdomains => :app_id
     
   end
   

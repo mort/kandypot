@@ -4,7 +4,6 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-
   
   # Scrub sensitive parameters from your log
   filter_parameter_logging :signature, :app_token
@@ -12,24 +11,21 @@ class ApplicationController < ActionController::Base
   private
   
   def require_app
-    
-    @app = App.find_by_nicename params[:app_id]
 
-    unless @app.nil?   
-      my_params = params.dup
-      my_params = clean_params(my_params)
-      
-      my_params = my_params.merge('date_scope' => Time.now.midnight.utc.iso8601)
+     @app = App.find_by_nicename params[:app_id]
 
-      par_str = my_params.sort.map{|j| j.join('=')}.join('&')
-      str = Digest::SHA1.hexdigest(par_str)
+     unless @app.nil?   
 
-      render :text => '', :status => :forbidden unless @app.authenticate(str, params[:signature])
-                
-    else
-      render :text => '', :status => :not_found 
-    end  
-  end
+       success = authenticate_or_request_with_http_digest(Settings.auth.realm) do |app_key|
+         Digest::MD5::hexdigest([@app.app_key, Settings.auth.realm, @app.app_token].join(":")) if @app.app_key == app_key
+       end
+
+       request_http_digest_authentication(Settings.auth.realm, "Authentication failed") unless success
+
+     else
+       render :text => '', :status => :not_found 
+     end  
+   end
   
   def clean_params(my_params)
 
