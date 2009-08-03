@@ -9,7 +9,7 @@ describe ActivitiesController, 'create' do
     @a = Activity.plan(:app => @app)
     @a[:app_id] = @app.nicename        
     
-    authenticate_with_http_digest(@app.app_key, @app.app_token, 'Kandypot')    
+    authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)    
     
     post :create, @a.merge(:subdomains => :app_id)
         

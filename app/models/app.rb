@@ -74,6 +74,9 @@ class App < ActiveRecord::Base
     self.update_attribute(:updated_at, Time.now)
   end
   
+  def api_auth_realm
+    "#{nicename}@#{Settings.auth.realm}"
+  end
     
   private
   

@@ -6,7 +6,7 @@ describe MembersController, 'get' do
   end
   
   it 'should respond with not found to a bad app id' do
-    authenticate_with_http_digest(@member.app.app_key, @member.app.app_token, 'Kandypot')    
+    authenticate_with_http_digest(@member.app.app_key, @member.app.app_token, @member.app.api_auth_realm)    
     
     get :show, :id => @member.member_token, :app_id => 'foo', :subdomains => :app_id
     response.response_code.should == 404
@@ -24,7 +24,7 @@ describe MembersController, 'get /member' do
     @member = Member.make(:kandies_count => 20)
     
   
-    authenticate_with_http_digest(@member.app.app_key, @member.app.app_token, 'Kandypot')    
+    authenticate_with_http_digest(@member.app.app_key, @member.app.app_token, @member.app.api_auth_realm)    
     
     get :show,  {:id => @member.member_token, :app_id => @member.app.nicename, :subdomains => :app_id}
   end
@@ -58,7 +58,7 @@ describe MembersController, 'get /members' do
     @app = App.make
     10.times { Member.make(:app => @app) }
     
-    authenticate_with_http_digest(@app.app_key, @app.app_token, 'Kandypot')    
+    authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)    
     
     get :index, :app_id => @app.nicename, :format => 'csv', :subdomains => :app_id
   end
