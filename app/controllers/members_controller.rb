@@ -15,7 +15,7 @@ class MembersController < ApplicationController
   
   def index
 
-    @members = @app.members.all :limit => Settings.apps.members.csv_limit, :order => 'created_at ASC'
+    @members = @app.members.all :limit => Settings.apps.members.csv_limit, :order => 'updated_at DESC, member_token ASC, created_at ASC'
     
     if stale?(:last_modified => @app.updated_at.utc, :etag => @app)    
       respond_to do |format|
