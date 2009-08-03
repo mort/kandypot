@@ -1,6 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
    
-  map.subdomain :model => :app, :namespace => nil do |app|
+  map.subdomain :model => :app, :namespace => nil, :path_prefix => 'api' do |app|
     app.resources :activities, :only => [:create]
     app.resources :members, :only => [:show, :index]
     app.resources :notifications, :only => [:index]
