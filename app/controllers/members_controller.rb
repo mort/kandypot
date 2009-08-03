@@ -24,7 +24,7 @@ class MembersController < ApplicationController
           @members.map { |r| CSV_FIELDS.map { |m| r.send m }  }.each { |row| csv << row }
         end
         send_data csv_string, :type => "text/plain", 
-                  :filename=> "#{@app.nicename}-#{@members}-#{Time.now.utc.iso8601}.csv",
+                  :filename=> "#{@app.nicename}_members-#{Time.now.utc.iso8601}.csv",
                   :disposition => 'inline'
         
       }
