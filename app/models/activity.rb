@@ -26,8 +26,8 @@ class Activity < ActiveRecord::Base
   include Kandypot::Hammurabi
   
   ACTIVITY_TYPES = ['creation', 'reaction', 'relationship']
-  SIGNATURE_PARAMS = [:member_token, :activity_type, :activity_at]
   MOOD_TYPES = ['positive', 'negative', 'neutral']
+  CONTENT_SOURCES = %w(ugc editorial)
   
   belongs_to :app
   
@@ -46,20 +46,11 @@ class Activity < ActiveRecord::Base
   # creation and reaction attrs
   validates_presence_of :content_token, :content_type, :content_source, :if => Proc.new {|act| %w(reaction creation).include?(act.activity_type) }
 
-  #validate :authenticated?
+  validates_inclusion_of :content_source, :in => CONTENT_SOURCES, :allow_nil => true
+
   
   after_create do |activity|
     activity.send_later(:judge)
   end
-  
-=begin    
-  def authenticated?
-    signature_params = self.attributes.reject {|k,v| !SIGNATURE_PARAMS.include?(k.to_sym)}
-    packed_signature_params = App.pack_up_params_for_signature(signature_params)
-    auth = App.authenticate(self.app_token, packed_signature_params, self.signature)
-    self.errors.add(:authentication, 'Bad credentials') unless auth 
-    return auth
-  end
-=end
   
 end
