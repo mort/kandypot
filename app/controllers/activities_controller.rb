@@ -8,8 +8,6 @@ class ActivitiesController < ApplicationController
     
     if @activity.save
       render :json => @activity.to_json, :status => :created 
-    elsif @activity.errors.on(:authentication)
-      render :text => '', :status => :forbidden
     else
       render :json => @activity.errors.to_json, :status => :bad_request  
     end
