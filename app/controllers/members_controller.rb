@@ -7,7 +7,7 @@ class MembersController < ApplicationController
     @member = @app.members.find_by_member_token(params[:id])
     
     if @member     
-      render :json => {:member_token => @member.member_token, :kandies_count => @member.kandies_count}, :status => :ok if stale?(:last_modified => @member.updated_at.utc, :etag => @member)
+      render :json => {:member_token => @member.member_token, :kandies_count => @member.kandies_count, :updated_at => @member.updated_at}, :status => :ok if stale?(:last_modified => @member.updated_at.utc, :etag => @member)
     else
       render :text => '', :status => :not_found  
     end
