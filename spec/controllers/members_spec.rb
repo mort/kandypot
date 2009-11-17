@@ -37,8 +37,8 @@ describe MembersController, 'get /member' do
     ActiveSupport::JSON::decode(response.body).class.should == Hash
   end
   
-  it 'should have two elements' do
-    ActiveSupport::JSON::decode(response.body).keys.size.should == 2
+  it 'should have three elements' do
+    ActiveSupport::JSON::decode(response.body).keys.size.should == 3
   end
   
   it 'should carry the kandies count' do
