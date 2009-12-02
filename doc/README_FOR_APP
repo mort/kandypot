@@ -1,2 +1,191 @@
-Use this README file to introduce your application and point to useful places in the API for learning more.
-Run "rake doc:app" to generate API documentation for your models, controllers, helpers, and libraries.
+Kandypot API
+---
+
+1. Manejo de la API
+
+1.1 Conceptos
+
+El cliente podrá utilizar la API de Kandypot para 
+
+- CREAR reportes de los distintos tipos de actividad de sus usuarios
+- CONSULTAR el saldo y datos de los usuarios
+- CONSULTAR notificaciones generadas por Kandypot
+
+1.2 Autenticación
+
+La llamadas a la API se autenticarán por medio de HTTP Digest Access Authentication
+
+http://en.wikipedia.org/wiki/Digest_access_authentication
+
+
+El campo "username" será el valor 'app_key' del cliente
+El campo "password" será el valor 'app_token' del cliente
+
+
+2 Actividades
+
+2.1 Introducción
+
+La aplicación cliente crea recursos de tipo Actividad para representar cada una de las acciones que los usuarios representan en su sitio. 
+
+Opciones:
+
+De tipos de actividad
+
+1. "creation": Representa creación de contenido por parte de un usuario.
+2. "reaction": Representa una reacción hacia un contenido.
+3. "relationship": Representa una interacción entre dos usuarios, sin un contenido interpuesto.
+
+De fuentes de contenido
+
+1. "ugc". Contenido creado por un usuario
+2. "editorial". Contenido creado por los responsables del sitio.
+
+
+2.2 Creación de una actividad
+
+2.2.1 Tipo de llamada
+
+POST a http://foo.kandypot.com/api/activities
+
+2.2.2 Respuestas posibles
+
+a) Actividad creada correctamente
+
+HTTP Status Code: 201 Created
+Cuerpo de la respuesta: la actividad creada
+Formato de la respuesta: JSON
+
+b) La actividad no ha podido crearse por parámetros incorrectos o falta de parámetros obligatorios
+
+HTTP Status Code: 400 Bad Request
+Cuerpo de la respuesta: listado de errores que impiden la creación de la actividad
+Formato de la respuesta: JSON
+
+2.2.3 Parámetros requeridos
+
+2.2.3.1 Comunes a todas las actividades
+
+- 'member_token': Identificador del usuario (hash MD5 del correo usado por el usuario en la aplicación cliente)
+- 'activity_type': Uno de las opciones de tipo de actividad admitidos (ver "Opciones")
+- 'activity_at': Fecha de realización de la actividad. 
+
+2.2.3.2 Actividad: "creation"
+
+- 'content_type': Tipo de contenido. Cadena representando el tipo de contenido creado (p.ej. 'post', 'video', 'review', etc.)
+- 'content_token': Identificador del contenido (hash MD5 del permalink del contenido creado)
+- 'content_source': De dónde procede el contenido. Una de las opciones de valor de fuente de actividad. Ver ("Opciones")
+
+2.2.3.3 Actividad: "reaction"
+
+- 'category': Tipo de reacción. Cadena que representa el tipo de reacción (p.ej. "comment", "favorite", ..) 
+- 'member_b_token': Identificador del usuario creador del contenido al que se reacciona (hash MD5 del correo usado por el usuario en la aplicación cliente). Sólo necesario si la fuente de contenido es 'ugc'
+- 'content_token': Identificador del contenido al que se reacciona (hash MD5 del permalink del contenido creado)
+- 'content_source': De dónde procede el contenido al que se reacciona. Una de las opciones de valor de fuente de actividad. Ver ("Opciones")
+
+2.2.3.3.1 Mood & Intensity
+
+- OPCIONAL 'mood': Uno de los valores posibles para expresar el sentido de la reacción (positiva, negativa ..) en los casos en que este sentido sea claro, por ejemplo, la diferencia entre valorar con  n estrellas, "me gusta", "no me gusta", "contenido inadecuado"
+
+- OPCIONAL 'intensity': Numérico. Si se utiliza el parámetro 'mood', puede utilizarse este valor para expresar la intensidad de la reacción (p.ej. la diferencia entre 3 y 5 estrellas)
+
+2.2.3.3 Actividad: "relationship"
+
+- 'member_b_token': Identificador del segundo usuario interviniente en la interacción; p.ej. el receptor de un mensaje directo, de una petición de amistad, etc..
+- 'category': Tipo de interacción o relación.  
+
+
+3 Miembros
+
+Comprobación del saldo de los miembros
+
+3.1 Listado de miembros 
+
+Descripción: para obtener un listado de los usuarios con sus correspondientes saldos de kandies.
+
+3.1.1 Tipo de llamada
+
+GET a http://foo.kandypot.com/api/members
+
+3.1.2 Respuestas posibles
+
+a) Listado actualizado
+
+HTTP Status Code: 200 OK
+Cuerpo de la respuesta: listado de usuarios, con su saldo de kandies y fecha de actualización
+Formato de la respuesta: csv
+
+Cacheado de la respuesta: el cliente debe almacenar el valor de la cabecera 'etag' y utilizarlo en la cabecera 'If-None-Match' en sucesivas peticiones.
+
+
+Ejemplo de respuesta
+
+---
+0318254ce7c576c583e8a63558e7f98877e6ec49,12,2009-08-03 20:46:40 UTC
+059fc5c60729cad3bfe07e1a5edaa51104c14518,12,2009-08-03 20:46:40 UTC
+0699d11f05594b85c6004ebba26712a5f9940090,12,2009-08-03 20:46:40 UTC
+0f4d89c1a93ea1b314ec6cad9a07cb743e41953c,13,2009-08-03 20:46:40 UTC
+---
+
+
+
+b) Listado no modificado desde la última petición
+
+HTTP Status Code: 304 Not Modified
+
+
+3.2 Vista de miembro
+
+Descripción: para consultar el saldo de un miembro determinado.
+
+3.2.1 Tipo de llamada
+
+GET a http://foo.kandypot.com/api/members/<identificador_de_usuario>
+
+3.2.2 Respuestas posibles
+
+a) Vista actualizada
+
+HTTP Status Code: 200 OK
+Cuerpo de la respuesta: datos del usuario (identificador, saldo actual, última actualización)
+Formato de la respuesta: json
+
+Cacheado de la respuesta: el cliente debe almacenar el valor de la cabecera 'etag' y utilizarlo en la cabecera 'If-None-Match' en sucesivas peticiones.
+
+Ejemplo de respuesta
+
+---
+{"updated_at":"2009-08-03T20:46:40Z","member_token":"1f1741c3d08c5d1c6a683cd21defac894b368414","kandies_count":12}
+---
+
+b) Vista no modificada desde la última petición
+
+HTTP Status Code: 304 Not Modified
+
+
+4 Notificaciones
+
+Avisos periódicos sobre el procesado de datos o puntuales sobre incidencias o información relevante
+
+4.1 Feed de notificaciones
+
+Descripción: listado de las últimas notificaciones
+
+4.1.1 Tipo de llamada
+
+GET a http://foo.kandypot.com/api/notifications
+
+4.1.2 Respuestas posibles
+
+a) Feed actualizado
+
+HTTP Status Code: 200 OK
+Cuerpo de la respuesta: listado de las últimas notificaciones
+Formato de la respuesta: Atom
+
+Cacheado de la respuesta: el cliente debe almacenar el valor de la cabecera 'etag' y utilizarlo en la cabecera 'If-None-Match' en sucesivas peticiones.
+
+b) Feed sin nuevas entradas
+
+HTTP Status Code: 304 Not Modified
+
