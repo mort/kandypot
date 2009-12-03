@@ -89,7 +89,7 @@ Formato de la respuesta: JSON
 
 - OPCIONAL 'intensity': Numérico. Si se utiliza el parámetro 'mood', puede utilizarse este valor para expresar la intensidad de la reacción (p.ej. la diferencia entre 3 y 5 estrellas)
 
-2.2.3.3 Actividad: "relationship"
+2.2.3.4 Actividad: "relationship"
 
 - 'member_b_token': Identificador del segundo usuario interviniente en la interacción; p.ej. el receptor de un mensaje directo, de una petición de amistad, etc..
 - 'category': Tipo de interacción o relación.  
