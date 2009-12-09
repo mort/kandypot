@@ -10,16 +10,17 @@ defaults: &defaults
       welcome: 20
       creation:
         default: 10
-        place: 20
-        route: 10
+        item: 20
+        guide: 10
       reaction:  
         default: 6
+        photo: 15
         comment: 15
         bookmark: 10
-        print: 15
-        share: 15
         has_been: 5
         wanna_go: 5
+        share: 15
+        print: 15
       relationship:  
         default: 6
         add: 10
