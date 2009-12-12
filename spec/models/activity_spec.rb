@@ -45,6 +45,12 @@ describe Activity, 'validation' do
     activity = Activity.new(a)
     activity.should_not be_valid
   end
+
+  it 'should not create activities with a content_type not included in the app settings' do
+    a = Activity.plan(:reaction, :content_type => 'wadus', :app => @app)
+    activity = Activity.new(a)
+    activity.should_not be_valid
+  end
   
 end
 
@@ -81,20 +87,6 @@ end
      @a.judge
    end
    
-   it 'should fall back to default amount for creation if amount for content type is not set' do
-     @a2 = Activity.make(:member_token => @m.member_token, :app => @app, :content_type => 'wadus')
-     
-     #mock(@app.settings.probabilities).default {0.7}
-     #mock(@app.settings.amounts.deposits.creation).default {10}
-
-     #mock(Trickster).whim(10,0.7){10}
-
-     mock.instance_of(Member).do_deposit(10,'creation')
-
-     @a2.judge
-   end
-   
-
    it 'should reward reaction' do
     @m2 = Member.make(:app => @app)
     @a2 = Activity.make(:reaction, :app => @app, :member_token => @m.member_token, :member_b_token => @m2.member_token)

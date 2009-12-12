@@ -48,7 +48,14 @@ class Activity < ActiveRecord::Base
 
   validates_inclusion_of :content_source, :in => CONTENT_SOURCES, :allow_nil => true
 
-  
+  def validate
+    if %w(creation reaction).include?(activity_type)
+      app.settings.amounts.deposits.send(activity_type).send(content_type)
+    end
+  rescue NoMethodError
+    self.errors.add(:content_type, 'not registered for this application ('+app.name+')')
+  end
+
   after_create do |activity|
     activity.send_later(:judge)
   end

@@ -41,7 +41,7 @@ Activity.blueprint do
   member_token
   content_token
   activity_type { 'creation' }
-  content_type { 'foo' }
+  content_type { 'default' }
   content_source { 'ugc' }
   ip { '127.0.0.1' }
   activity_at { Time.now }
@@ -54,7 +54,7 @@ Activity.blueprint(:reaction) do
   content_token
   activity_type { 'reaction' }
   category { 'comment' }
-  content_type { 'foo' }
+  content_type { 'default' }
   content_source { 'ugc' }
   ip { '127.0.0.1' }
   activity_at { Time.now }
