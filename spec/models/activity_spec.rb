@@ -46,8 +46,20 @@ describe Activity, 'validation' do
     activity.should_not be_valid
   end
 
-  it 'should not create activities with a content_type not included in the app settings' do
-    a = Activity.plan(:reaction, :content_type => 'wadus', :app => @app)
+  it 'should not create activities of type creation with a content_type not included in the app settings' do
+    a = Activity.plan(:creation, :content_type => 'wadus', :app => @app)
+    activity = Activity.new(a)
+    activity.should_not be_valid
+  end
+  
+  it 'should not create activities of type reaction with a content_type not included in the app settings' do
+    a = Activity.plan(:reaction, :content_type => 'comment', :app => @app)
+    activity = Activity.new(a)
+    activity.should_not be_valid
+  end
+  
+  it 'should not create activities of type reaction with a category not included in the app settings' do
+    a = Activity.plan(:reaction, :category => 'wadus', :app => @app)
     activity = Activity.new(a)
     activity.should_not be_valid
   end
@@ -104,24 +116,5 @@ end
     @a2.judge
    end    
    
-   it 'should fall back to default amount if amount for reaction category is not set' do
-    @m2 = Member.make(:app => @app)
-    a2 = Activity.plan(:reaction, :category => 'foo', :app => @app, :member_token => @m.member_token, :member_b_token => @m2.member_token)
-    @a2 = Activity.make(a2)
- 
-    #mock(@app.settings.probabilities).default{0.7}
-    #mock(@app.settings.amounts.deposits.reaction).default{5}
-    #mock(@app.settings.percentages.transfers.reaction).default{10}  
-
-    #mock(Trickster).whim(5, 0.7){5}
-    #mock(Trickster).whim(1, 0.7){1}
-
-    mock.instance_of(Member).do_deposit(50,"reaction foo")
-    mock.instance_of(Member).do_transfer(1, @m2, 'reaction foo (received)')
-
-    @a2.judge
-   end
-
-    
 end
  

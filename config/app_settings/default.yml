@@ -10,6 +10,7 @@ defaults: &defaults
       welcome: 2
       creation:
         default: 10
+        item: 10
       reaction:  
         default: 6
         comment: 6
