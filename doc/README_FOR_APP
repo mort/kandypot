@@ -80,6 +80,7 @@ Formato de la respuesta: JSON
 
 - 'category': Tipo de reacción. Cadena que representa el tipo de reacción (p.ej. "comment", "favorite", ..) 
 - 'member_b_token': Identificador del usuario creador del contenido al que se reacciona (hash MD5 del correo usado por el usuario en la aplicación cliente). Sólo necesario si la fuente de contenido es 'ugc'
+- 'content_type': Tipo de contenido. Cadena representando el tipo de contenido creado (p.ej. 'post', 'video', 'review', etc.)
 - 'content_token': Identificador del contenido al que se reacciona (hash MD5 del permalink del contenido creado)
 - 'content_source': De dónde procede el contenido al que se reacciona. Una de las opciones de valor de fuente de actividad. Ver ("Opciones")
 
