@@ -12,6 +12,7 @@ defaults: &defaults
         default: 10
         item: 20
         guide: 10
+        place: 0
       reaction:  
         default: 6
         photo: 15
@@ -38,6 +39,4 @@ test:
  
 production:
   <<: *defaults
-
-
 
