@@ -54,7 +54,33 @@ module Kandypot
         sender.do_transfer(transfer_amount, recipient, "reaction #{s} (received)") unless transfer_amount.nil?
       end
     end
+    
+    def judge_relationship(app, member, p) 
+      return if (self.member_b_token == member.member_token)
+      recipient =  app.members.find_or_create_by_member_token(self.member_b_token)  
 
+      # Let's reward the recipient
+      s = self.category
+
+      n = app.settings.amounts.deposits.relationship.respond_to?(s) ? s : 'default' 
+      proposed_amount = app.settings.amounts.deposits.relationship.send(n)
+      amount = Trickster::whim(proposed_amount, p)
+      
+      unless amount.nil?
+        recipient.do_deposit(amount, "reaction #{s}")
+        
+        # Let's transfer from initiator to the receiver
+        sender = member
+        m =  app.settings.percentages.transfers.relationship.respond_to?(s) ? s : 'default'
+        p = Trickster::modulate(p, self.mood, self.intensity, app.settings.probabilities.max, app.settings.probabilities.min) unless (self.mood.nil? || self.intensity.nil?)
+        percentage = app.settings.percentages.transfers.relationship.send(m)
+        proposed_transfer_amount = ((amount.to_f*percentage.to_f/100)).ceil
+        transfer_amount = Trickster::whim(proposed_transfer_amount, p)
+
+        member.do_transfer(transfer_amount, recipient, "relationship #{s} (received)") unless transfer_amount.nil?
+      end
+      
+    end
   end
 
   module Exceptions

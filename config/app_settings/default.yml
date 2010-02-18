@@ -17,11 +17,13 @@ defaults: &defaults
       relationship:  
         default: 6
         add: 6
+        dm: 5
   percentages:  
     transfers:
       reaction:
         default: 10
-        
+      relationship:
+        default: 10
  
 development:
   <<: *defaults
