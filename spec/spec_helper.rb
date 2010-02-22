@@ -88,7 +88,7 @@ class ActionController::TestCase
  
       def process_with_test(request, response)
         credentials = {
-          :uri => request.env['REQUEST_URI'],
+          :uri => request.url,
           :realm => "#{realm}",
           :username => "#{user}",
           :nonce => ActionController::HttpAuthentication::Digest.nonce,
