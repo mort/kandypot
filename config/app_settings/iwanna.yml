@@ -17,7 +17,7 @@ defaults: &defaults
         default: 6
         photo: 15
         comment: 15
-        route: 10
+        bookmark: 10
         has_been: 5
         wanna_go: 5
         share: 15
