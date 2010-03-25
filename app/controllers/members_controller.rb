@@ -14,8 +14,7 @@ class MembersController < ApplicationController
   end
   
   def index
-
-    @members = @app.members.all :limit => Settings.apps.members.csv_limit, :order => 'updated_at DESC, created_at ASC'
+    @members = @app.members.all :limit => Settings.apps.members.csv_limit, :order => 'kandies_count DESC'
     
     if stale?(:last_modified => @app.updated_at.utc, :etag => @app)    
       respond_to do |format|
@@ -26,7 +25,6 @@ class MembersController < ApplicationController
         send_data csv_string, :type => "text/plain", 
                   :filename=> "#{@app.nicename}_members-#{Time.now.utc.iso8601}.csv",
                   :disposition => 'inline'
-        
       }
     end
     end
