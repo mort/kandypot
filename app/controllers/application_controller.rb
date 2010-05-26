@@ -17,8 +17,8 @@ class ApplicationController < ActionController::Base
      unless @app.nil?   
        realm = @app.api_auth_realm
        success = authenticate_or_request_with_http_digest(realm) do |app_key|
-         Digest::MD5::hexdigest([@app.app_key, realm, @app.app_token].join(":")) if @app.app_key == app_key
-       end
+                 Digest::MD5::hexdigest([@app.app_key, realm, @app.app_token].join(":")) if @app.app_key == app_key
+               end
 
        request_http_digest_authentication(Settings.auth.realm, "Authentication failed") unless success
 
