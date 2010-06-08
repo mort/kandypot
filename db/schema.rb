@@ -9,13 +9,13 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20090712225052) do
+ActiveRecord::Schema.define(:version => 20100608092019) do
 
   create_table "activities", :force => true do |t|
     t.string   "app_token"
     t.string   "signature"
     t.string   "member_token"
-    t.string   "content_token"
+    t.text     "content_url"
     t.string   "member_b_token"
     t.string   "activity_type"
     t.string   "content_type"

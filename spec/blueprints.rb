@@ -11,7 +11,7 @@ Sham.nicename { Faker::Lorem.words(1)[0] }
 Sham.member_token { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }
 Sham.app_token { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }
 Sham.signature { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }
-Sham.content_token { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }
+Sham.content_url { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }
 Sham.member_b_token { Digest::SHA1.hexdigest(Faker::Lorem.sentence) }
 Sham.category { Faker::Lorem.words(1) }
 
@@ -39,7 +39,7 @@ end
 Activity.blueprint do
   app
   member_token
-  content_token
+  content_url
   activity_type { 'creation' }
   content_type { 'default' }
   content_source { 'ugc' }
@@ -51,7 +51,7 @@ Activity.blueprint(:reaction) do
   app
   member_token
   member_b_token
-  content_token
+  content_url
   activity_type { 'reaction' }
   category { 'comment' }
   content_type { 'default' }
@@ -64,7 +64,7 @@ Activity.blueprint(:relationship) do
   app
   member_token
   member_b_token
-  content_token
+  content_url
   activity_type { 'relationship' }
   category { 'dm' }
   ip { '127.0.0.1' }

@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20090702181526
+# Schema version: 20100608092019
 #
 # Table name: activities
 #
@@ -7,7 +7,7 @@
 #  app_token          :string(255)
 #  signature          :string(255)
 #  member_token       :string(255)
-#  content_token      :string(255)
+#  content_url        :text
 #  member_b_token     :string(255)
 #  activity_type      :string(255)
 #  content_type       :string(255)
@@ -19,6 +19,9 @@
 #  created_at         :datetime
 #  updated_at         :datetime
 #  category           :string(255)
+#  mood               :string(100)
+#  intensity          :integer(2)
+#  app_id             :integer(4)      not null
 #
 
 class Activity < ActiveRecord::Base
@@ -44,7 +47,7 @@ class Activity < ActiveRecord::Base
   validates_presence_of :member_b_token, :category, :if => Proc.new {|act| %w(reaction relationship).include?(act.activity_type) }
   
   # creation and reaction attrs
-  validates_presence_of :content_token, :content_type, :content_source, :if => Proc.new {|act| %w(reaction creation).include?(act.activity_type) }
+  validates_presence_of :content_url, :content_type, :content_source, :if => Proc.new {|act| %w(reaction creation).include?(act.activity_type) }
 
   validates_inclusion_of :content_source, :in => CONTENT_SOURCES, :allow_nil => true
 

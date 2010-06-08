@@ -1,10 +1,10 @@
 # == Schema Information
-# Schema version: 20090620163846
+# Schema version: 20100608092019
 #
 # Table name: kandies
 #
 #  id         :integer(4)      not null, primary key
-#  uuid       :string(36)      default(""), not null
+#  uuid       :string(36)      not null
 #  created_at :datetime
 #  updated_at :datetime
 #
