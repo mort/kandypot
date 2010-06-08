@@ -15,7 +15,7 @@ class MembersController < ApplicationController
   def index
     params[:order] ||= 'kandies_count DESC'
     params[:per_page] ||= Settings.apps.members.csv_limit
-    params[:page]  ||= 1
+    params[:page] ||= 1
     
     @members = @app.members.paginate(:all, :per_page => params[:per_page], :order => params[:order], :page => params[:page])
 
@@ -25,12 +25,13 @@ class MembersController < ApplicationController
       respond_to do |format|
       format.csv {
        
-        @headers['Link'] = "#{app_members_url(@app, options.merge(:page => @members.previous_page))};rel=prev" unless @members.previous_page.nil?
-        @headers['Link'] = "#{app_members_url(@app, options.merge(:page => @members.next_page))};rel=next" unless @members.next_page.nil?
+        headers['Link'] = "#{app_members_url(@app, options.merge(:page => @members.previous_page))};rel=prev" unless @members.previous_page.nil?
+        headers['Link'] = "#{app_members_url(@app, options.merge(:page => @members.next_page))};rel=next" unless @members.next_page.nil?
         
          csv_string = FasterCSV.generate do |csv|
           @members.map { |r| CSV_FIELDS.map { |m| r.send m }  }.each { |row| csv << row }
         end
+        
         send_data csv_string, :type => "text/plain", 
                   :filename=> "#{@app.nicename}_members-#{Time.now.utc.iso8601}.csv",
                   :disposition => 'inline'
