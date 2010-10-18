@@ -193,7 +193,6 @@ describe Activity, 'badges' do
     @m.has_badge?(@badge.title).should be_true
   end
   
-  
   it 'should concede a spree badge' do
 
     n = 2
@@ -219,6 +218,28 @@ describe Activity, 'badges' do
     @m.has_badge?(@badge.title).should be_true
   end
   
+  it 'should concede a cycle badge' do
+
+    n = 3
+    period_qtty = 1
+    period_type = 'day'
+    content_type = '*'
+    
+    params = { 'n' => n, 
+               'period_qtty' => period_qtty, 
+               'period_type' => period_type, 
+               'content_type' => content_type, 
+              }
+              
+    
+     @badge = Badge.make(:app => @app, :title => 'Cycle Badge', :description => "You have created #{n} pieces of  content in #{period_qtty} #{period_type}", :badge_type => 'Cycle', :params => params)
+    
+    n.times do
+      Activity.make(:app => @app, :member_token => @m.member_token, :content_type => 'default') 
+    end
+        
+    @m.has_badge?(@badge.title).should be_true
+  end
   
 end
  
