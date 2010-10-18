@@ -78,3 +78,12 @@ Notification.blueprint do
   body 
   category 
 end
+
+Badge.blueprint do
+  app
+  badge_type
+  title
+  description
+  params
+end
+

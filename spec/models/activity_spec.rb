@@ -145,4 +145,80 @@ end
    end
    
 end
+
+
+describe Activity, 'badges' do
+  before do
+
+    @app = App.make(:name => 'iwanna')    
+    #stub(Activity).validate { true }
+    stub.instance_of(Activity).validate_content_type {true}
+    
+    @m = Member.make(:app => @app)
+  
+  end
+  
+  it 'should concede a welcome badge' do
+      # Badge de bienvenida al crear ese tipo de contenido
+      params = { 'content_type' => 'default' }
+
+      @badge = Badge.make(:app => @app, :title => 'Welcome Badge', :description => 'Welcome to the jungle!', :badge_type => 'Welcome', :params => params)
+    
+    @a = Activity.make(:app => @app, :member_token => @m.member_token, :content_type => 'default')
+    @m.has_badge?(@badge.title).should be_true
+  end
+  
+  it 'should concede a newbish badge after n' do
+    n = 5
+    params = { 'content_type' => 'default', 'n' => n }
+    
+     @badge = Badge.make(:app => @app, :title => 'Newbish Badge', :description => 'You are doing great', :badge_type => 'Newbish', :params => params)
+    
+    n.times { Activity.make(:app => @app, :member_token => @m.member_token, :content_type => 'default') }
+    @m.has_badge?(@badge.title).should be_true
+  end
+  
+  it 'should concede a diversity badge' do
+
+    n = 2
+    types = %w(item guide place)
+    params = { 'content_types' => types.join(';'), 'n' => n }
+    
+     @badge = Badge.make(:app => @app, :title => 'Diversity Badge', :description => 'You have created three different types of content', :badge_type => 'Diversity', :params => params)
+    
+    types.each do |type| 
+      n.times { Activity.make(:app => @app, :member_token => @m.member_token, :content_type => type) }
+    end
+    
+    @m.has_badge?(@badge.title).should be_true
+  end
+  
+  
+  it 'should concede a spree badge' do
+
+    n = 2
+    period_qtty = 3
+    period_type = 'day'
+    content_type = '*'
+    
+    params = { 'n' => n, 
+               'period_qtty' => period_qtty, 
+               'period_type' => period_type, 
+               'content_type' => content_type, 
+              }
+              
+    
+     @badge = Badge.make(:app => @app, :title => 'Spree Badge', :description => "You have created #{n} pieces of  content in #{period_qtty} consecutive #{period_type}s", :badge_type => 'Spree', :params => params)
+    
+    10.downto(0) do |i|
+      n.times do
+         Activity.make(:app => @app, :member_token => @m.member_token, :content_type => 'default', :activity_at => i.days.ago) 
+        end
+    end
+        
+    @m.has_badge?(@badge.title).should be_true
+  end
+  
+  
+end
  

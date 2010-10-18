@@ -36,6 +36,7 @@ class App < ActiveRecord::Base
   has_many :members
   has_many :notifications, :order => 'created_at DESC'
   has_many :activities
+  has_many :badges
   
   def to_param
      nicename

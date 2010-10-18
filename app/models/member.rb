@@ -20,6 +20,7 @@ class Member < ActiveRecord::Base
   has_many :kandy_ownerships
 
   has_many :kandies, :through => :kandy_ownerships, :conditions => ['kandy_ownerships.status = ?', KandyOwnership::STATUSES.index(:active)] do
+    
 
     def pick(amount, method = :rand)
       options = {:limit => amount}
@@ -40,8 +41,10 @@ class Member < ActiveRecord::Base
   has_many :deposits, :class_name => 'OperationLog', :conditions => ['operation_type = ?', 'deposit']
   has_many :transfers, :class_name => 'OperationLog', :conditions => ['operation_type = ?', 'transfer']
   has_many :sent_transfers, :class_name => 'OperationLog', :foreign_key => 'sender_id', :conditions => ['operation_type = ?', 'transfer']
-
-
+  
+  has_many :badge_grants
+  has_many :badges, :through => :badge_grants
+  
   #after_create do |member|
    # member.send_later(:do_welcome_deposit)
   #end
@@ -76,6 +79,14 @@ class Member < ActiveRecord::Base
   def do_welcome_deposit
     amount = self.app.settings.amounts.deposits.welcome
     do_deposit(amount, 'Welcome deposit')
+  end
+
+  def has_badge?(badge_title)
+    badges.collect(&:title).include?(badge_title)
+  end
+
+  def self.grant_badge(member_token, badge)
+    self.find_by_member_token(member_token).badges << badge 
   end
 
 end

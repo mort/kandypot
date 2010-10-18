@@ -63,16 +63,17 @@ class Activity < ActiveRecord::Base
   private
 
   def validate_content_type
-    validate_setting :creation, :content_type
+    validate_setting :creation, content_type
   end
 
   def validate_category
-    validate_setting :reaction, :category
+    validate_setting :reaction, category
   end
 
-  def validate_setting(atype, type)
-    app.settings.amounts.deposits.send(atype).send(self.send(type))
+  def validate_setting(k, v)
+    logger.info("#{k}: #{v}")
+    app.settings.amounts.deposits.send(k).send(v)
   rescue NoMethodError
-    self.errors.add(type, "not registered for this application (#{app.name})")
+    self.errors.add(v, "not registered for this application (#{app.name})")
   end
 end

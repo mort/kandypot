@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100608092019) do
+ActiveRecord::Schema.define(:version => 20101015122601) do
 
   create_table "activities", :force => true do |t|
     t.string   "app_token"
@@ -53,6 +53,24 @@ ActiveRecord::Schema.define(:version => 20100608092019) do
   add_index "apps", ["name"], :name => "index_apps_on_name", :unique => true
   add_index "apps", ["nicename"], :name => "index_apps_on_nicename", :unique => true
   add_index "apps", ["url"], :name => "index_apps_on_url", :unique => true
+
+  create_table "badge_grants", :force => true do |t|
+    t.integer  "badge_id"
+    t.integer  "member_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "badges", :force => true do |t|
+    t.integer  "app_id"
+    t.string   "badge_type"
+    t.string   "title"
+    t.string   "description"
+    t.text     "params"
+    t.integer  "status",      :limit => 1
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "delayed_jobs", :force => true do |t|
     t.integer  "priority",   :default => 0
