@@ -1,1 +1,58 @@
-See doc/README_FOR_APP
+Kandypot primer.
+
+
+----
+
+Teoría
+
+- Usuario X => Acticidad en App Y => Kandypot => Juicio => Kandies?
+
+- Tipos de actividades: creación/reacción/relación
+
+- Juicio => porcentaje de probabilidad (global o por app)
+
+- Kandy como objeto permanente. KandyOwnerships para expresar periodos de propiedad.
+
+- Metáfora bancaria. Ingresos, saldo, transferencias
+
+- Transferencias entre usuarios, para expresar interacciones
+
+- Historial del kandy. Historial del usuario.
+
+- Badges definidas por cada app. Tipos de badges (newbie, streak, milestone), parámetros configurables por la app
+
+- Concesión de badges
+
+
+Práctica
+
+API HTTP.
+- Reportar actividades
+
+-- POST a http://wadus.kandypot.com/activities 
+-- Hash del email como identificador de usuarios
+-- URL como identificador del contenido
+-- Tipo de actividad
+-- Intensidad de la actividad
+-- Mood de la actividad
+
+
+- Saldo de todos los usuarios:  GET  a http://wadus.kandypot.com/members/
+- Saldo de un usuario:  GET  a http://wadus.kandypot.com/members/xxxx
+- Historial de un usuario:  http://wadus.kandypot.com/members/xxxx/history
+- Historial de la app:  http://wadus.kandypot.com/members/history
+
+
+Streaming API
+
+- Node.js + websockets
+- Feedback en tiempo real de las operaciones
+
+
+
+
+
+
+
+
+
