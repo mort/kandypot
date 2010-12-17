@@ -193,7 +193,7 @@ describe Activity, 'badges' do
     @m.has_badge?(@badge.title).should be_true
   end
   
-  it 'should concede a spree badge' do
+  it 'should concede a streak badge' do
 
     n = 2
     period_qtty = 3
@@ -207,7 +207,7 @@ describe Activity, 'badges' do
               }
               
     
-     @badge = Badge.make(:app => @app, :title => 'Spree Badge', :description => "You have created #{n} pieces of  content in #{period_qtty} consecutive #{period_type}s", :badge_type => 'Spree', :params => params)
+     @badge = Badge.make(:app => @app, :title => 'Streak Badge', :description => "You have created #{n} pieces of  content in #{period_qtty} consecutive #{period_type}s", :badge_type => 'Streak', :params => params)
     
     10.downto(0) do |i|
       n.times do

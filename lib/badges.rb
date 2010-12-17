@@ -88,7 +88,7 @@ module Kandypot
 
          prior_date = period_qtty.send(period_type.to_sym).ago
                       
-         Badge::BADGE_SPREE_TIME_PERIODS.each do |period|
+         Badge::BADGE_STREAK_TIME_PERIODS.each do |period|
 
             # Vamos a construir dinámicamente una cadena SQL tipo AND YEAR(activities.activity_at) = 2010
             # AND MONTH(activities.activity_at) = 5 AND ..
@@ -113,7 +113,7 @@ module Kandypot
         end
       end
       
-      class SpreeProcessor
+      class StreakProcessor
         def self.process(activity, badge)
           
           
@@ -144,7 +144,7 @@ module Kandypot
             # 1.day.ago / 2.months.ago / 3.years.ago
             prior_date = i.send(period_type.to_sym).ago
 
-            Badge::BADGE_SPREE_TIME_PERIODS.each do |period|
+            Badge::BADGE_STRAK_TIME_PERIODS.each do |period|
               
               # Vamos a construir dinámicamente una cadena SQL tipo AND YEAR(activities.activity_at) = 2010
               # AND MONTH(activities.activity_at) = 5 AND ..
