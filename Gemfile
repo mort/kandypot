@@ -12,7 +12,8 @@ gem 'daemons', '1.0.10'
 gem "mholling-subdomain_routes", '0.2.3', :require => "subdomain_routes"
 gem 'hoptoad_notifier', '2.1.3'
 gem 'will_paginate', '~> 2.3.11'
-
+gem 'ruby-hmac', '0.4.0'
+gem 'uuid', '2.3.1'
 
 group :test do
 	gem 'notahat-machinist', '1.0.0', :require => 'machinist'
@@ -23,4 +24,8 @@ group :test do
 	gem 'aslakhellesoy-cucumber', '0.3.11.6', :require => false
 	gem 'webrat', '0.4.4', :require => false
 	gem 'feedvalidator', '0.1.2', :require => 'feed_validator'
+end
+
+group :development do
+	gem 'annotate', '2.4.0'
 end
