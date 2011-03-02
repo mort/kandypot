@@ -28,12 +28,12 @@ config.action_mailer.delivery_method = :test
 # config.active_record.schema_format = :sql
 
 
-config.gem 'rr'
-config.gem 'faker'
-config.gem "rspec", :lib => false, :version => ">= 1.2.6", :source => 'http://gems.github.com'
-config.gem "rspec-rails", :lib => false, :version => ">= 1.2.6", :source => 'http://gems.github.com'
-config.gem 'aslakhellesoy-cucumber', :lib => false, :version => ">= 0.3.11", :source => 'http://gems.github.com'
-config.gem 'webrat', :lib => false
-config.gem 'feedvalidator', :lib => 'feed_validator'
+# config.gem 'rr'
+# config.gem 'faker'
+# config.gem "rspec", :lib => false, :version => ">= 1.2.6", :source => 'http://gems.github.com'
+# config.gem "rspec-rails", :lib => false, :version => ">= 1.2.6", :source => 'http://gems.github.com'
+# config.gem 'aslakhellesoy-cucumber', :lib => false, :version => ">= 0.3.11", :source => 'http://gems.github.com'
+# config.gem 'webrat', :lib => false
+# config.gem 'feedvalidator', :lib => 'feed_validator'
 
 config.cache_classes = false
