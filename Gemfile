@@ -4,12 +4,12 @@ source 'http://gems.github.com'
 gem 'rails', '2.3.8'
 gem 'mysql', '2.8.1'
 
-gem "settingslogic", "1.0.0"
+gem "settingslogic", "2.0.6"
 gem 'wvanbergen-http_status_exceptions', '0.1.3', :require => 'http_status_exceptions'
 gem 'javan-whenever', '0.3.0', :require => false
 gem 'fastercsv', '1.5.0'
 gem 'daemons', '1.0.10'
-gem "mholling-subdomain_routes", '0.2.3', :require => "subdomain_routes"
+gem "subdomain_routes", '0.3.1', :require => "subdomain_routes"
 gem 'hoptoad_notifier', '2.1.3'
 gem 'will_paginate', '~> 2.3.11'
 gem 'ruby-hmac', '0.4.0'
