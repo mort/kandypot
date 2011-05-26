@@ -1,108 +1,79 @@
 module Kandypot
+ 
   module Hammurabi
     def judge
-      member = app.members.find_or_create_by_member_token(self.member_token)
+      member = app.members.find_or_create_by_member_token(self.actor_token)
       p = app.settings.probabilities.default
-      
-      method_name = "judge_#{self.activity_type}"
-      
-      if self.respond_to?(method_name)
-        self.send(method_name.to_sym, app, member, p) 
-      else  
-        raise Kandypot::Exceptions::UnknownActivity, method_name
+            
+      case self.category 
+        when 'singular', 'creation'
+          reward(app, member, p, false)
+        when 'reaction'
+          reward(app, member, p, true) { 
+            recipient_token = self.object_author_token
+            subject = "reaction #{s} (received)"
+          }
+        when 'interaction'
+          reward(app, member, p, true) { 
+            recipient_token = self.object_token 
+            subject = "relationship #{s} (received)"
+          }
+        else
+         raise Kandypot::Exceptions::UnknownActivity, method_name
       end
+      
     end
-    
-    def judge_creation(app, member, p)
-      # Let's reward the creator of the content 
-      s = self.content_type 
-      n = app.settings.amounts.deposits.creation.respond_to?(s) ? s : 'default' 
-      
-      proposed_amount = app.settings.amounts.deposits.creation.send(n)
-      amount = Trickster::whim(proposed_amount, p)
-      member.do_deposit(amount, "content creation #{s}") unless amount.nil?
-    end
-    
-    def judge_reaction(app, member, p)
-      return if (self.member_b_token == member.member_token)
-      content_owner = app.members.find_or_create_by_member_token(self.member_b_token)  
-      # Let's reward the reactor
-      
-      s = self.category
-
-      n = app.settings.amounts.deposits.reaction.respond_to?(s) ? s : 'default' 
-      proposed_amount = app.settings.amounts.deposits.reaction.send(n)
-      
-      
-      amount = Trickster::whim(proposed_amount, p)
-      
-      unless amount.nil?
-        member.do_deposit(amount, "reaction #{s}")
-
-        # Let's transfer from participant to the content's owner
-        sender = member
-        recipient = content_owner
-        m =  app.settings.percentages.transfers.reaction.respond_to?(s) ? s : 'default'
-      
-        p = Trickster::modulate(p, self.mood, self.intensity, app.settings.probabilities.max, app.settings.probabilities.min) unless (self.mood.nil? || self.intensity.nil?)
-                
-        percentage = app.settings.percentages.transfers.reaction.send(m)
-        proposed_transfer_amount = ((amount.to_f*percentage.to_f/100)).ceil
         
-        transfer_amount = Trickster::whim(proposed_transfer_amount, p)
+    def reward(app, member, p, with_transfer = true, &block)
+       max = app.settings.probabilities.max
+       min = app.settings.probabilities.min
+  
+       modulated_p = Trickster::modulate(p, self.mood, self.intensity, max, min) 
+       amount = Trickster::whim(self.reward, modulated_p)
 
-        sender.do_transfer(transfer_amount, recipient, "reaction #{s} (received)") unless transfer_amount.nil?
+       if (!amount.nil? && with_transfer)
+         member.do_deposit(amount, self.category) 
+         
+         percentage =  app.settings.percentages.send(:default)
+         transfer_amount = ((amount.to_f*percentage.to_f/100)).ceil
+
+         yield(block)
+
+         recipient = app.members.find_or_create_by_member_token(recipient_token)          
+         
+         unless ((member == recipient) || transfer_amount.nil?) do
+           member.do_transfer(transfer_amount, recipient, subject) 
+         end
+      
       end
+
     end
     
-    def judge_relationship(app, member, p) 
-      return if (self.member_b_token == member.member_token)
-      recipient =  app.members.find_or_create_by_member_token(self.member_b_token)  
-
-      # Let's reward the recipient
-      s = self.category
-
-      n = app.settings.amounts.deposits.relationship.respond_to?(s) ? s : 'default' 
-      proposed_amount = app.settings.amounts.deposits.relationship.send(n)
-      amount = Trickster::whim(proposed_amount, p)
       
-      unless amount.nil?
-        recipient.do_deposit(amount, "reaction #{s}")
-        
-        # Let's transfer from initiator to the receiver
-        sender = member
-        m =  app.settings.percentages.transfers.relationship.respond_to?(s) ? s : 'default'
-        p = Trickster::modulate(p, self.mood, self.intensity, app.settings.probabilities.max, app.settings.probabilities.min) unless (self.mood.nil? || self.intensity.nil?)
-        percentage = app.settings.percentages.transfers.relationship.send(m)
-        proposed_transfer_amount = ((amount.to_f*percentage.to_f/100)).ceil
-        transfer_amount = Trickster::whim(proposed_transfer_amount, p)
-
-        member.do_transfer(transfer_amount, recipient, "relationship #{s} (received)") unless transfer_amount.nil?
-      end
-      
-    end
   end
-
+  
   module Exceptions
     class UnknownActivity < StandardError; end
   end
-end
+  
+  class Trickster
+    def self.whim(i, p = 0.8)
+      (rand < p) ? i : nil
+    end
 
-class Trickster
-  def self.whim(i, p = 0.8)
-    (rand < p) ? i : nil
+    def self.modulate(p, max, min, mood = 'neutral', intensity = 1)
+       return p
+       op = (mood == 'negative') ? '-' : '+'
+       i = (Math::log10(intensity)/2)
+
+       p = p.to_f.send(op, i) 
+
+       p =  sprintf("%.2f", p).to_f
+
+       return (p > max) ? max : ((p < min) ? min : p)
+
+    end
   end
   
-  def self.modulate(p, mood, intensity, max, min)
-     
-     op = (mood == 'negative') ? '-' : '+'
-     i = (Math::log10(intensity)/2)
-     
-     p = p.to_f.send(op, i) 
-
-     p =  sprintf("%.2f", p).to_f
-     
-     return (p > max) ? max : ((p < min) ? min : p)
-     
-  end
 end
+
