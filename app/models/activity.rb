@@ -1,79 +1,182 @@
-# == Schema Information
-# Schema version: 20100608092019
-#
-# Table name: activities
-#
-#  id                 :integer(4)      not null, primary key
-#  app_token          :string(255)
-#  signature          :string(255)
-#  member_token       :string(255)
-#  content_url        :text
-#  member_b_token     :string(255)
-#  activity_type      :string(255)
-#  content_type       :string(255)
-#  content_source     :string(255)
-#  ip                 :string(15)
-#  activity_at        :datetime
-#  processed_at       :datetime
-#  proccessing_status :integer(2)
-#  created_at         :datetime
-#  updated_at         :datetime
-#  category           :string(255)
-#  mood               :string(100)
-#  intensity          :integer(2)
-#  app_id             :integer(4)      not null
-#
+require 'uuid'
 
 class Activity < ActiveRecord::Base
   require 'hammurabi'
-  include Kandypot::Hammurabi
+  #include Kandypot::Hammurabi
   
-  ACTIVITY_TYPES = ['creation', 'reaction', 'relationship']
-  MOOD_TYPES = ['positive', 'negative', 'neutral']
-  CONTENT_SOURCES = %w(ugc editorial)
+  API_PARAMS = [:actor_token, :verb, :published, :object_token, :object_url, :target_token, :target_url, :target_author_token, :mood, :intensity]
+  
+  MOOD_TYPES = [1, -1, 0]
   
   belongs_to :app
   
+  before_validation :set_defaults
+  
+  ## VALIDATIONS
+  
   # common
-  validates_presence_of  :member_token, :activity_type, :ip, :activity_at
-  validates_inclusion_of :activity_type, :in => ACTIVITY_TYPES
+  validates_presence_of  :actor_token, :verb, :category, :ip, :published, :uuid
+  validates_inclusion_of :mood, :in => MOOD_TYPES, :allow_nil => true
   
+  # tokens
+  validates_format_of :actor_token, :target_token, :target_author_token, :with => /^([a-f0-9]{32})$/, :allow_nil => true
   
-  # mood and intensity in reactions (for @limalimon)
-  validates_inclusion_of :mood, :in => MOOD_TYPES, :allow_nil => true, :if => Proc.new {|act| act.activity_type == 'reaction'}
-  validates_numericality_of :intensity, :allow_nil => true, :if => Proc.new {|act| act.activity_type == 'reaction'}
-
-  # reaction and relationship attrs
-  validates_presence_of :member_b_token, :category, :if => Proc.new {|act| %w(reaction relationship).include?(act.activity_type) }
+  # urls
+  validates_format_of :object_url, :target_url, :with => /^((http|https?):\/\/((?:[-a-z0-9]+\.)+[a-z]{2,}))/, :allow_nil => true
   
-  # creation and reaction attrs
-  validates_presence_of :content_url, :content_type, :content_source, :if => Proc.new {|act| %w(reaction creation).include?(act.activity_type) }
+  # We need an object url and an object type when the verb is 'post'
+  validates_presence_of :object_url, :object_type, :if => Proc.new {|act| act.verb_is?(:post) }
 
-  validates_inclusion_of :content_source, :in => CONTENT_SOURCES, :allow_nil => true
+  # We need a target_type if the target is present and either target_token (when the target is a Person) or an target_url (when the target is something else)  
+  validates_presence_of :target_type, :if =>  Proc.new {|act|  act.has_target? }
+  validates_presence_of :target_token, :if => Proc.new {|act|  act.person_target? }  
+  validates_presence_of :target_url, :if => Proc.new {|act| act.content_target? }
 
+  
+  # If the target is not a person, we need info about its author
+  validates_presence_of :target_author_token, :if =>  Proc.new {|act| act.content_target? }
+        
+  after_create do |activity|
+    #activity.send_later(:judge)
+    #activity.judge
+  end
+  
   def validate
-    validate_content_type if %w(creation reaction).include?(activity_type)
-    validate_category if activity_type == 'reaction'
+    validate_reward_setting(verb, object_type)
+  end
+  
+  def set_defaults
+    self.uuid     = UUID.new.generate
+    self.category = guess_category
+  end
+    
+  def activityId
+    'wadus'
+  end
+  
+  def actorId
+    'wadus'
+  end
+  
+  def object_authorId
+    'wadus'
+  end
+  
+  def objectId
+    'wadus'
+  end
+    
+  
+  def guess_category
+    if (no_object? && no_target?)
+      # Sign-ups, etc.
+      'singular'
+    elsif has_object? && verb_is?(:post)
+      # Content upload
+      'creation'  
+    elsif person_target?
+      # DMs, new friendship, etc.
+      'interaction'
+    elsif content_target?
+      # Comments, favorites, sharing, etc.
+      'reaction'  
+    else 
+      raise Exceptions::Kandypot::UnknownActivityCategory, self.inspect
+    end
   end
 
-  after_create do |activity|
-    activity.send_later(:judge)
+  def no_object?
+    (object_type.blank? && object_url.blank?)
+  end
+  
+  def has_object?
+    !no_object?
+  end
+  
+  def no_target?
+    (target_type.blank? && target_url.blank? && target_token.blank?)
+  end
+  
+  def has_target?
+    !no_target?
+  end
+  
+  def target_is?(target_sym)
+    target_type.present? && (target_type.to_sym == target_sym)
+  end
+  
+  def content_target?
+    has_target? && !target_is?(:person)
+  end
+
+  def person_target?
+    has_target? && target_is?(:person)
+  end
+
+  def verb_is?(verb_sym)
+    return false unless verb
+    verb.to_sym == verb_sym
+  end
+  
+  def judge
+    Hammuraby.new(self).judge
   end
   
   private
+  
 
-  def validate_content_type
-    validate_setting :creation, content_type
+  def validate_reward_setting(verb, object_type = nil)
+    object_type.present? ? validate_verb_object_type(verb, object_type) :  validate_verb(verb)
   end
 
-  def validate_category
-    validate_setting :reaction, category
+  def validate_verb_object_type(verb, object_type)
+    app.settings.rewards.send(verb).send(object_type)
+    rescue Settings::MissingSetting
+      validate_verb(verb)
+  end
+  
+  def validate_verb(verb)
+    return false unless verb
+    
+    app.settings.rewards.send(verb).send(:default)
+    rescue Settings::MissingSetting
+      errors.add("Verb #{verb}")
   end
 
-  def validate_setting(k, v)
-    logger.info("#{k}: #{v}")
-    app.settings.amounts.deposits.send(k).send(v)
-  rescue NoMethodError
-    self.errors.add(v, "not registered for this application (#{app.name})")
+  
+
+end
+
+
+# == Schema Information
+#
+# Table name: activities
+#
+#  id                  :integer(4)      not null, primary key
+#  app_id              :integer(4)
+#  processed_at        :datetime
+#  proccessing_status  :integer(2)
+#  ip                  :string(15)      not null
+#  category            :string(25)      not null
+#  uuid                :string(36)      not null
+#  published           :datetime        not null
+#  actor_token         :string(32)      not null
+#  verb                :string(255)     not null
+#  object_type         :string(255)
+#  object_url          :string(255)
+#  target_type         :string(255)
+#  target_token        :string(32)
+#  target_url          :string(255)
+#  target_author_token :string(32)
+#  mood                :string(25)
+#  intensity           :integer(2)
+#  created_at          :datetime
+#  updated_at          :datetime
+#
+
+module Exceptions
+  module Kandypot
+    class UnknownActivity < StandardError; end
+    class UnknownActivityCategory  < StandardError; end
   end
 end

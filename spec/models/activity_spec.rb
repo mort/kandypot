@@ -1,160 +1,190 @@
 require File.dirname(__FILE__) + '/../spec_helper'
 
-describe Activity do
+describe Activity, 'singular' do
   before do
-    @app = App.make
+   @act = build(:act)
+   @act.stub!('validate_verb').and_return(true)
+   @act.save!
   end
   
-  
-  it 'should be queued for judgement' do
-    lambda {
-      a = Activity.make
-    }.should change(Delayed::Job,:count).by(1)
+  it 'should be valid' do
+    @act.should be_valid
   end
   
-end
-
-
-describe Activity, 'validation' do
-  before do
-    @app = App.make(:name => 'iwanna')
+  it 'should know its own verb' do
+    @act.verb_is?(@act.verb.to_sym).should == true
   end
   
-  it 'should create well formed activities (creation)' do
-    a = Activity.plan(:app => @app)
-    
-    activity = Activity.new(a)
-    activity.should be_valid
+  it 'should have the right category' do
+    @act.guess_category.should == 'singular'
   end
   
-  it 'should create well formed activities (reaction_*)' do
-    a = Activity.plan(:reaction, :app => @app)
-        
-    activity = Activity.new(a)
-    activity.should be_valid
+  it 'should not have an object' do
+    @act.no_object?.should == true
   end
   
-  it 'should not create activities with unregistered reaction types' do
-    a = Activity.plan(:reaction, :activity_type => 'reaction_foo', :app => @app) 
-    activity = Activity.new(a)
-    activity.should_not be_valid
-  end
-  
-  it 'should not create activities of type reaction if member_b_token is not present' do
-    a = Activity.plan(:reaction, :member_b_token => '', :app => @app)
-    activity = Activity.new(a)
-    activity.should_not be_valid
-  end
-
-  it 'should not create activities of type relationship if member_b_token is not present' do
-    a = Activity.plan(:relationship, :member_b_token => '', :app => @app)
-    activity = Activity.new(a)
-    activity.should_not be_valid
-  end
-
-  it 'should not create activities of type creation with a content_type not included in the app settings' do
-    a = Activity.plan(:creation, :content_type => 'wadus', :app => @app)
-    activity = Activity.new(a)
-    activity.should_not be_valid
-  end
-  
-  it 'should not create activities of type reaction with a content_type not included in the app settings' do
-    a = Activity.plan(:reaction, :content_type => 'comment', :app => @app)
-    activity = Activity.new(a)
-    activity.should_not be_valid
-  end
-  
-  it 'should not create activities of type reaction with a category not included in the app settings' do
-    a = Activity.plan(:reaction, :category => 'wadus', :app => @app)
-    activity = Activity.new(a)
-    activity.should_not be_valid
+  it 'should not have a target' do
+    @act.no_target?.should == true
   end
   
   
 end
 
 
- describe Activity, 'judgement' do
-   before do
-     @app = App.make(:name => 'iwanna')
-     @m = Member.make(:app => @app)
-     @a = Activity.make(:app => @app, :member_token => @m.member_token)
-   end
-   
-   it 'should include the Hammurabi module' do
-     @a.should respond_to(:judge)
-   end
-   
-   it 'should have a judge creation method' do
-     @a.should respond_to(:judge_creation)
-   end
-   
-   it 'should have a judge_reaction method' do
-     @a.should respond_to(:judge_reaction)
-   end
-   
-   it 'should have a judge_relationship method' do
-     @a.should respond_to(:judge_relationship)
-   end
-   
-   
-  it 'should reward content creation' do
+describe Activity, 'creation' do
+  before do
+   @act = build(:creation_act)
+   @act.stub!('validate_verb').and_return(true)
+   @act.save!
+  end
+  
+  it 'should be valid' do
+    @act.should be_valid
+  end
+  
+  it 'should know its own verb' do
+    @act.verb_is?(@act.verb.to_sym).should == true
+  end
+  
+  it 'should have the right category' do
+    @act.guess_category.should == 'creation'
+  end
     
-    #mock(@m.app.settings.probabilities.default){0.7}
-    #mock(@m.app.settings.amounts.deposits.creation).foo{33}
-
-     #mock(Trickster).whim(10,0.5){10}
-
-     mock.instance_of(Member).do_deposit(10,'creation')
-
-     @a.judge
-   end
-   
-   it 'should reward reaction' do
-    @m2 = Member.make(:app => @app)
-    @a2 = Activity.make(:reaction, :app => @app, :member_token => @m.member_token, :member_b_token => @m2.member_token)
+  it 'should not have a target' do
+    @act.has_object?.should == true
+  end
   
-    #mock(@app.settings.probabilities).default {0.7}
-    #mock(@app.settings.amounts.deposits.reaction).comment{50}
-    #mock(@app.settings.percentages.transfers.reaction).comment{10}  
-
-    #mock(Trickster).whim(50, 0.7){50}
-    #mock(Trickster).whim(5, 0.7){5}
-
-    #mock.instance_of(Member).do_deposit(50,'reaction_comment')
-    #mock.instance_of(Member).do_transfer(5, @m2, 'reaction_comment (received)')
-
-    @a2.judge
-   end    
-   
-   it 'should reward relationship' do
-    @m2 = Member.make(:app => @app)
-    @a2 = Activity.make(:relationship, :app => @app, :member_token => @m.member_token, :member_b_token => @m2.member_token)
   
-    #mock(@app.settings.probabilities).default {0.7}
-    #mock(@app.settings.amounts.deposits.reaction).comment{50}
-    #mock(@app.settings.percentages.transfers.reaction).comment{10}  
+end
 
-    #mock(Trickster).whim(50, 0.7){50}
-    #mock(Trickster).whim(5, 0.7){5}
 
-    #mock.instance_of(Member).do_deposit(50,'reaction_comment')
-    #mock.instance_of(Member).do_transfer(5, @m2, 'reaction_comment (received)')
+describe Activity, 'reaction' do
+  before do
+   @act = build(:reaction_act)
+   @act.stub!('validate_verb').and_return(true)
+   @act.save!
+  end
+  
+  it 'should be valid' do
+    @act.should be_valid
+  end
+  
 
-    @a2.judge
-   end
-   
+  it 'should have the right category' do
+    @act.guess_category.should == 'reaction'
+  end
+    
+  it 'should have a target' do
+    @act.has_target?.should == true
+  end
+
+  it 'should have a content target' do
+    @act.content_target?.should == true
+  end
+  
+  it 'should have a url for the target' do
+    @act.target_url.should_not be_nil
+  end
+  
+  it 'should have a token for the target author' do
+    @act.target_author_token.should_not be_nil
+  end
+  
+
+end
+
+
+describe Activity, 'interaction' do
+  before do
+   @act = build(:interaction_act)
+   @act.stub!('validate_verb').and_return(true)
+   @act.save!
+  end
+  
+  it 'should be valid' do
+    @act.should be_valid
+  end
+  
+  it 'should have the right category' do
+    @act.guess_category.should == 'interaction'
+  end
+    
+  it 'should have a target' do
+    @act.has_target?.should == true
+  end
+
+  it 'should have a person target' do
+    @act.person_target?.should == true
+  end
+  
+  it 'should have a token for the target' do
+    @act.target_token.should_not be_nil
+  end
+  
+  it 'should not have a token for the target author' do
+    @act.target_author_token.should be_nil
+  end
+  
+
+end
+
+
+describe Activity, 'badly formed' do
+
+  
+  it 'should not be valid without an actor_token and verb' do
+    @act = build(:act, :actor_token => nil, :verb => nil)
+    @act.should_not be_valid
+  end
+  
+  context 'creation' do
+  
+    it 'should not be valid without an object' do
+      @act = build(:creation_act, :object_url => nil)
+      @act.should_not be_valid
+    end
+    
+  end
+  
+  context 'reaction' do
+  
+    it 'should not be valid without a target' do
+      @act = build(:reaction_act, :target_url => nil)
+      @act.should_not be_valid
+    end
+    
+    it 'should not be valid without a target author' do
+      @act = build(:reaction_act, :target_author_token => nil)
+      @act.should_not be_valid
+    end
+  
+  end
+
+  context 'interaction' do
+  
+    it 'should not be valid without a target' do
+      @act = build(:interaction_act, :target_token => nil)
+      @act.stub!('validate_verb').and_return(true)
+      
+      @act.should_not be_valid
+    end
+    
+  
+  end
+
+
 end
 
 
 describe Activity, 'badges' do
+
   before do
 
-    @app = App.make(:name => 'iwanna')    
+    @app = create(:app, :name => 'iwanna')    
     #stub(Activity).validate { true }
     stub.instance_of(Activity).validate_content_type {true}
     
-    @m = Member.make(:app => @app)
+    @m = create(:member,:app => @app)
   
   end
   
@@ -174,7 +204,7 @@ describe Activity, 'badges' do
     
      @badge = Badge.make(:app => @app, :title => 'Newbish Badge', :description => 'You are doing great', :badge_type => 'Newbish', :params => params)
     
-    n.times { Activity.make(:app => @app, :member_token => @m.member_token, :content_type => 'default') }
+    n.times { create(:activity, :app => @app, :member_token => @m.member_token, :content_type => 'default') }
     @m.has_badge?(@badge.title).should be_true
   end
   
@@ -243,3 +273,31 @@ describe Activity, 'badges' do
   
 end
  
+  
+
+# == Schema Information
+#
+# Table name: activities
+#
+#  id                  :integer(4)      not null, primary key
+#  app_id              :integer(4)
+#  processed_at        :datetime
+#  proccessing_status  :integer(2)
+#  ip                  :string(15)      not null
+#  category            :string(25)      not null
+#  uuid                :string(36)      not null
+#  published           :datetime        not null
+#  actor_token         :string(32)      not null
+#  verb                :string(255)     not null
+#  object_type         :string(255)
+#  object_url          :string(255)
+#  target_type         :string(255)
+#  target_token        :string(32)
+#  target_url          :string(255)
+#  target_author_token :string(32)
+#  mood                :string(25)
+#  intensity           :integer(2)
+#  created_at          :datetime
+#  updated_at          :datetime
+#
+

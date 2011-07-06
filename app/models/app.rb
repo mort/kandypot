@@ -24,12 +24,11 @@ class App < ActiveRecord::Base
   
   SETTINGS_BASE_PATH = Rails.root.join('config','app_settings')
   
-  validates_presence_of :name, :nicename, :app_key, :app_token
-  validates_uniqueness_of :name, :nicename, :app_key, :app_token
+  validates_presence_of :name, :nicename, :app_key, :app_token, :url
+  validates_uniqueness_of :name, :nicename, :app_key, :app_token, :url
   
   validates_subdomain_format_of :nicename
   validates_subdomain_not_reserved :nicename
-  
   
   before_validation :generate_credentials
   
@@ -43,7 +42,7 @@ class App < ActiveRecord::Base
    end
   
   def self.default_settings_path
-    [App::SETTINGS_BASE_PATH, "default.yml"].join('/')
+    File.join(SETTINGS_BASE_PATH, "default.yml")
   end
   
   def authenticate(data, signature)
@@ -57,7 +56,7 @@ class App < ActiveRecord::Base
   
   
   def has_settings?
-    return true if File.exists?(self.settings_filepath)
+    File.exists?(self.settings_filepath)
   end
   
   def settings_filepath
@@ -65,7 +64,8 @@ class App < ActiveRecord::Base
   end
   
   def settings
-    @settings ||= (self.has_settings? ? Settings.new(settings_filepath) : Settings.new(App.default_settings_path))
+    path = self.has_settings? ? settings_filepath : App.default_settings_path
+    @settings ||= Settings.new(path)
   end
   
   def update_members_kandy_cache

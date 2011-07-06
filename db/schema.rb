@@ -9,27 +9,28 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101015122601) do
+ActiveRecord::Schema.define(:version => 20110523110133) do
 
   create_table "activities", :force => true do |t|
-    t.string   "app_token"
-    t.string   "signature"
-    t.string   "member_token"
-    t.text     "content_url"
-    t.string   "member_b_token"
-    t.string   "activity_type"
-    t.string   "content_type"
-    t.string   "content_source"
-    t.string   "ip",                 :limit => 15
-    t.datetime "activity_at"
+    t.integer  "app_id"
     t.datetime "processed_at"
-    t.integer  "proccessing_status", :limit => 2
+    t.integer  "proccessing_status",  :limit => 2
+    t.string   "ip",                  :limit => 15, :null => false
+    t.string   "category",            :limit => 25, :null => false
+    t.string   "uuid",                :limit => 36, :null => false
+    t.datetime "published",                         :null => false
+    t.string   "actor_token",         :limit => 32, :null => false
+    t.string   "verb",                              :null => false
+    t.string   "object_type"
+    t.string   "object_url"
+    t.string   "target_type"
+    t.string   "target_token",        :limit => 32
+    t.string   "target_url"
+    t.string   "target_author_token", :limit => 32
+    t.string   "mood",                :limit => 25
+    t.integer  "intensity",           :limit => 2
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "category"
-    t.string   "mood",               :limit => 100
-    t.integer  "intensity",          :limit => 2
-    t.integer  "app_id",                            :null => false
   end
 
   create_table "apps", :force => true do |t|
@@ -123,13 +124,12 @@ ActiveRecord::Schema.define(:version => 20101015122601) do
   end
 
   create_table "operation_logs", :force => true do |t|
-    t.integer  "member_id"
-    t.integer  "sender_id"
-    t.string   "operation_type", :default => "", :null => false
-    t.integer  "amount",         :default => 0,  :null => false
-    t.string   "subject",        :default => "", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "activity_id"
+    t.integer  "app_id"
+    t.text     "data"
+    t.datetime "executed_at"
   end
 
 end

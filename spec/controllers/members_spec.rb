@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe MembersController, 'get' do
   before do
-    @member = Member.make
+    @member = create(:member)
   end
   
   it 'should respond with not found to a bad app id' do

@@ -36,38 +36,26 @@ class Member < ActiveRecord::Base
     end
 
   end
-
-  has_many :operation_logs
-  has_many :deposits, :class_name => 'OperationLog', :conditions => ['operation_type = ?', 'deposit']
-  has_many :transfers, :class_name => 'OperationLog', :conditions => ['operation_type = ?', 'transfer']
-  has_many :sent_transfers, :class_name => 'OperationLog', :foreign_key => 'sender_id', :conditions => ['operation_type = ?', 'transfer']
   
   has_many :badge_grants
   has_many :badges, :through => :badge_grants
   
-  #after_create do |member|
-   # member.send_later(:do_welcome_deposit)
-  #end
+  validates_presence_of :member_token
   
-  after_create :do_welcome_deposit  
 
-  def do_deposit(amount, subject)
+  def receive_kandies(amount, activity_uuid)
     return false unless amount > 0
     amount.times { self.kandies.create }
-    self.deposits.create(:operation_type => 'deposit', :amount => amount, :subject => subject)
   end
   
-  def do_transfer(amount, recipient, subject)
-    return false unless (amount > 0 && amount < self.kandies.count)
+  def transfer_kandies(amount, recipient, activity_uuid)
+    return false unless amount < self.kandies.count
     transfer_kandies = self.kandies.pick(amount, :fifo)
     
     transfer_kandies.each do |k|
       k.current_ownership.expire
       recipient.kandies << k
-    end 
-    
-    recipient.transfers.create(:operation_type => 'transfer', :amount => amount, :subject => subject, :sender => self)
-    
+    end     
   end
     
   def update_kandy_cache
@@ -75,12 +63,6 @@ class Member < ActiveRecord::Base
     self.update_attribute(:kandies_count, kc)
   end
   
-    
-  def do_welcome_deposit
-    amount = self.app.settings.amounts.deposits.welcome
-    do_deposit(amount, 'Welcome deposit')
-  end
-
   def has_badge?(badge_title)
     badges.collect(&:title).include?(badge_title)
   end
