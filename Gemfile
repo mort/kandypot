@@ -15,13 +15,27 @@ gem 'will_paginate', '~> 2.3.11'
 gem 'ruby-hmac', '0.4.0'
 gem 'uuid', '2.3.1'
 
-group :test do
-  gem 'rr', '1.0.2'
-
-  gem 'machinist', '~>2.0.0.beta'
-  gem 'shoulda', '~>3.0.0.beta'
-end
 
 group :development do
 	gem 'annotate', '2.4.0'
+end
+
+
+group :development, :test do
+  #gem 'rspec', "1.3.3",  :require => false
+  gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
+  gem 'guard' 
+  gem 'growl' 
+end
+
+group :test do
+  # Pretty printed test output
+  gem 'turn', :require => false
+  gem 'spork', '0.8.5'
+  gem 'factory_girl', "~> 2.0.0.rc1"
+  gem 'forgery'
+  gem 'guard-bundler'
+  gem 'guard-spork'
+  gem 'guard-rspec'
+  gem 'delorean', "~> 1.1.0"
 end

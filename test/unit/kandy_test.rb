@@ -6,3 +6,14 @@ class KandyTest < ActiveSupport::TestCase
     assert true
   end
 end
+
+# == Schema Information
+#
+# Table name: kandies
+#
+#  id         :integer(4)      not null, primary key
+#  uuid       :string(36)      not null
+#  created_at :datetime
+#  updated_at :datetime
+#
+

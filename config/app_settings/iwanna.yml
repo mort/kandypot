@@ -1,35 +1,22 @@
 defaults: &defaults
+  app: iwanna
   probabilities:
-    default: 0.5
+    default: 0.502
     max: 0.95
     min: 0.5
     deposits:
       initial: 1
-  amounts:
-    deposits:
-      welcome: 20
-      creation:
-        default: 10
-        item: 20
-        guide: 10
-        place: 0
-      reaction:  
-        default: 6
-        photo: 15
-        comment: 15
-        bookmark: 10
-        has_been: 5
-        wanna_go: 5
-        share: 15
-        print: 15
-      relationship:  
-        default: 6
-        add: 10
-        dm: 5
+  rewards:
+    signup: 
+      default: 20
+    post:
+      default: 20
+    comment: 
+      default: 15
+    like: 
+      default: 10
   percentages:  
-    transfers:
-      reaction:
-        default: 10
+    default: 10
  
 development:
   <<: *defaults
@@ -39,4 +26,3 @@ test:
  
 production:
   <<: *defaults
-

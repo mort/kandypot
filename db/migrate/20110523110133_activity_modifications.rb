@@ -25,10 +25,15 @@ class ActivityModifications < ActiveRecord::Migration
       t.string :verb, :null => false
       
       t.string :object_type
-      t.string :object_token
       t.string :object_url
+            
+      t.string :target_type
+      t.string :target_token, :limit => 32
+      t.string :target_url
       
-      t.string :object_author_token
+      t.string :target_author_token, :limit => 32
+      
+      
       
       t.string :mood, :limit => 25
       t.integer :intensity, :limit => 2

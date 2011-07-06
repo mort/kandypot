@@ -2,30 +2,44 @@ require 'uuid'
 
 class Activity < ActiveRecord::Base
   require 'hammurabi'
-  include Kandypot::Hammurabi
+  #include Kandypot::Hammurabi
   
-  API_PARAMS = [:actor_token, :verb, :published, :object_token, :object_url, :object_author_token, :mood, :intensity]
+  API_PARAMS = [:actor_token, :verb, :published, :object_token, :object_url, :target_token, :target_url, :target_author_token, :mood, :intensity]
   
-  MOOD_TYPES = ['positive', 'negative', 'neutral']
+  MOOD_TYPES = [1, -1, 0]
   
   belongs_to :app
   
-  # common
-  validates_presence_of  :actor_token, :verb, :category, :ip, :published, :uuid
-  
-  # We need either object_token (when the object is a Person) or an object_url (when the object is something else)  
-  validates_presence_of :object_token, :if => Proc.new {|act| act.person_object? }  
-  validates_presence_of :object_url, :if =>   Proc.new {|act| act.content_object? }
-
-  # If the object is not a person, we need info about its author
-  validates_presence_of :object_author_token, :if =>  Proc.new {|act| act.content_object? }
-  
-  validates_inclusion_of :mood, :in => MOOD_TYPES, :allow_nil? => true
-    
   before_validation :set_defaults
   
+  
+  ## VALIDATIONS
+  
+  # common
+  validates_presence_of  :actor_token, :verb, :category, :ip, :published, :uuid
+  validates_inclusion_of :mood, :in => MOOD_TYPES, :allow_nil => true
+  
+  # tokens
+  validates_format_of :actor_token, :target_token, :target_author_token, :with => /^([a-f0-9]{32})$/, :allow_nil => true
+  
+  # urls
+  validates_format_of :object_url, :target_url, :with => /^((http|https?):\/\/((?:[-a-z0-9]+\.)+[a-z]{2,}))/, :allow_nil => true
+  
+  # We need an object url and an object type when the verb is 'post'
+  validates_presence_of :object_url, :object_type, :if => Proc.new {|act| act.verb_is?(:post) }
+
+  # We need a target_type if the target is present and either target_token (when the target is a Person) or an target_url (when the target is something else)  
+  validates_presence_of :target_type, :if =>  Proc.new {|act|  act.has_target? }
+  validates_presence_of :target_token, :if => Proc.new {|act|  act.person_target? }  
+  validates_presence_of :target_url, :if => Proc.new {|act| act.content_target? }
+
+  
+  # If the target is not a person, we need info about its author
+  validates_presence_of :target_author_token, :if =>  Proc.new {|act| act.content_target? }
+        
   after_create do |activity|
-    activity.send_later(:judge)
+    #activity.send_later(:judge)
+    #activity.judge
   end
   
   def validate
@@ -33,18 +47,10 @@ class Activity < ActiveRecord::Base
   end
   
   def set_defaults
-    self.uuid     = set_uuid
-    self.category = set_category
+    self.uuid     = UUID.new.generate
+    self.category = guess_category
   end
-  
-  def reward
-    begin
-      app.settings.rewards.send(verb).send(object_type)
-    rescue NoMethodError
-      app.settings.rewards.send(verb).send(:default)
-    end
-  end
-  
+    
   def activityId
     'wadus'
   end
@@ -61,71 +67,87 @@ class Activity < ActiveRecord::Base
     'wadus'
   end
     
-  private
   
-  def set_category
-    if no_object?
+  def guess_category
+    if (no_object? && no_target?)
       # Sign-ups, etc.
       'singular'
-    elsif object_is?(:person)
-      # DMs, new friendship, etc.
-      'interaction'
-    elsif has_verb?(:post)
+    elsif has_object? && verb_is?(:post)
       # Content upload
       'creation'  
-    else
+    elsif person_target?
+      # DMs, new friendship, etc.
+      'interaction'
+    elsif content_target?
       # Comments, favorites, sharing, etc.
       'reaction'  
+    else 
+      raise Exceptions::Kandypot::UnknownActivityCategory, self.inspect
     end
   end
-  
-  def set_uuid
-    UUID.new.generate
-  end
-  
+
   def no_object?
-    (object_type.blank? && object_url.blank? && object_token.blank?)
+    (object_type.blank? && object_url.blank?)
   end
   
-  def object_is?(object_sym)
-    (object_type.to_sym == object_sym)
+  def has_object?
+    !no_object?
   end
   
-  def content_object?
-    !object_is?(:person)
+  def no_target?
+    (target_type.blank? && target_url.blank? && target_token.blank?)
+  end
+  
+  def has_target?
+    !no_target?
+  end
+  
+  def target_is?(target_sym)
+    target_type.present? && (target_type.to_sym == target_sym)
+  end
+  
+  def content_target?
+    has_target? && !target_is?(:person)
   end
 
-  def person_object?
-    object_is?(:person)
+  def person_target?
+    has_target? && target_is?(:person)
   end
 
-  def has_verb?(verb_sym)
-    self.verb.to_sym == verb_sym
+  def verb_is?(verb_sym)
+    return false unless verb
+    verb.to_sym == verb_sym
   end
+  
+  def judge
+    Hammuraby.new(self).judge
+  end
+  
+  private
+  
 
   def validate_reward_setting(verb, object_type = nil)
     object_type.present? ? validate_verb_object_type(verb, object_type) :  validate_verb(verb)
   end
 
   def validate_verb_object_type(verb, object_type)
-    begin
-      app.settings.rewards.send(verb).send(object_type)
-    rescue NoMethodError
+    app.settings.rewards.send(verb).send(object_type)
+    rescue Settings::MissingSetting
       validate_verb(verb)
-    end
   end
   
   def validate_verb(verb)
-    begin
-      app.settings.rewards.send(verb).send(:default)
-    rescue NoMethodError
-      errors.add("Verb #{verb} is not registered with this app")
-    end
+    return false unless verb
+    
+    app.settings.rewards.send(verb).send(:default)
+    rescue Settings::MissingSetting
+      errors.add("Verb #{verb}")
   end
 
   
 
 end
+
 
 # == Schema Information
 #
@@ -142,12 +164,20 @@ end
 #  actor_token         :string(32)      not null
 #  verb                :string(255)     not null
 #  object_type         :string(255)
-#  object_token        :string(255)
 #  object_url          :string(255)
-#  object_author_token :string(255)
+#  target_type         :string(255)
+#  target_token        :string(32)
+#  target_url          :string(255)
+#  target_author_token :string(32)
 #  mood                :string(25)
 #  intensity           :integer(2)
 #  created_at          :datetime
 #  updated_at          :datetime
 #
 
+module Exceptions
+  module Kandypot
+    class UnknownActivity < StandardError; end
+    class UnknownActivityCategory  < StandardError; end
+  end
+end

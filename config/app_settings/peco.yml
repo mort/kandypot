@@ -1,0 +1,29 @@
+defaults: &defaults
+  postback_url: http://peercouture.dev/kp/postback_url
+  probabilities:
+    default: 0.502
+    max: 0.95
+    min: 0.5
+    deposits:
+      initial: 1
+  rewards:
+    signup: 
+      default: 20
+    post:
+      default: 20
+    comment: 
+      default: 15
+    like: 
+      default: 10
+  percentages:  
+    default: 10
+ 
+development:
+  <<: *defaults
+ 
+test:
+  <<: *defaults
+ 
+production:
+  <<: *defaults
+
