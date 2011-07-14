@@ -26,8 +26,7 @@ describe Activity, 'singular' do
   it 'should not have a target' do
     @act.no_target?.should == true
   end
-  
-  
+    
 end
 
 
@@ -52,6 +51,11 @@ describe Activity, 'creation' do
     
   it 'should not have a target' do
     @act.has_object?.should == true
+  end
+  
+  it 'should have the right predicate' do
+    @act.predicate_attr.should == :object_type
+    @act.predicate_type.should == @act.object_type
   end
   
   
@@ -88,6 +92,11 @@ describe Activity, 'reaction' do
   
   it 'should have a token for the target author' do
     @act.target_author_token.should_not be_nil
+  end
+  
+  it 'should have the right predicate' do
+    @act.predicate_attr.should == :target_type
+    @act.predicate_type.should == @act.target_type
   end
   
 
@@ -176,103 +185,6 @@ describe Activity, 'badly formed' do
 end
 
 
-describe Activity, 'badges' do
-
-  before do
-
-    @app = create(:app, :name => 'iwanna')    
-    #stub(Activity).validate { true }
-    stub.instance_of(Activity).validate_content_type {true}
-    
-    @m = create(:member,:app => @app)
-  
-  end
-  
-  it 'should concede a welcome badge' do
-      # Badge de bienvenida al crear ese tipo de contenido
-      params = { 'content_type' => 'default' }
-
-      @badge = Badge.make(:app => @app, :title => 'Welcome Badge', :description => 'Welcome to the jungle!', :badge_type => 'Welcome', :params => params)
-    
-    @a = Activity.make(:app => @app, :member_token => @m.member_token, :content_type => 'default')
-    @m.has_badge?(@badge.title).should be_true
-  end
-  
-  it 'should concede a newbish badge after n' do
-    n = 5
-    params = { 'content_type' => 'default', 'n' => n }
-    
-     @badge = Badge.make(:app => @app, :title => 'Newbish Badge', :description => 'You are doing great', :badge_type => 'Newbish', :params => params)
-    
-    n.times { create(:activity, :app => @app, :member_token => @m.member_token, :content_type => 'default') }
-    @m.has_badge?(@badge.title).should be_true
-  end
-  
-  it 'should concede a diversity badge' do
-
-    n = 2
-    types = %w(item guide place)
-    params = { 'content_types' => types.join(';'), 'n' => n }
-    
-     @badge = Badge.make(:app => @app, :title => 'Diversity Badge', :description => 'You have created three different types of content', :badge_type => 'Diversity', :params => params)
-    
-    types.each do |type| 
-      n.times { Activity.make(:app => @app, :member_token => @m.member_token, :content_type => type) }
-    end
-    
-    @m.has_badge?(@badge.title).should be_true
-  end
-  
-  it 'should concede a streak badge' do
-
-    n = 2
-    period_qtty = 3
-    period_type = 'day'
-    content_type = '*'
-    
-    params = { 'n' => n, 
-               'period_qtty' => period_qtty, 
-               'period_type' => period_type, 
-               'content_type' => content_type, 
-              }
-              
-    
-     @badge = Badge.make(:app => @app, :title => 'Streak Badge', :description => "You have created #{n} pieces of  content in #{period_qtty} consecutive #{period_type}s", :badge_type => 'Streak', :params => params)
-    
-    10.downto(0) do |i|
-      n.times do
-         Activity.make(:app => @app, :member_token => @m.member_token, :content_type => 'default', :activity_at => i.days.ago) 
-        end
-    end
-        
-    @m.has_badge?(@badge.title).should be_true
-  end
-  
-  it 'should concede a cycle badge' do
-
-    n = 3
-    period_qtty = 1
-    period_type = 'day'
-    content_type = '*'
-    
-    params = { 'n' => n, 
-               'period_qtty' => period_qtty, 
-               'period_type' => period_type, 
-               'content_type' => content_type, 
-              }
-              
-    
-     @badge = Badge.make(:app => @app, :title => 'Cycle Badge', :description => "You have created #{n} pieces of  content in #{period_qtty} #{period_type}", :badge_type => 'Cycle', :params => params)
-    
-    n.times do
-      Activity.make(:app => @app, :member_token => @m.member_token, :content_type => 'default') 
-    end
-        
-    @m.has_badge?(@badge.title).should be_true
-  end
-  
-end
- 
   
 
 # == Schema Information

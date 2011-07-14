@@ -14,7 +14,8 @@ gem 'hoptoad_notifier', '2.1.3'
 gem 'will_paginate', '~> 2.3.11'
 gem 'ruby-hmac', '0.4.0'
 gem 'uuid', '2.3.1'
-
+gem 'active_hash', "~> 0.9.5", :require => 'active_hash'
+gem 'rabl'
 
 group :development do
 	gem 'annotate', '2.4.0'
@@ -38,4 +39,5 @@ group :test do
   gem 'guard-spork'
   gem 'guard-rspec'
   gem 'delorean', "~> 1.1.0"
+  gem "rack-test", :require => "rack/test"
 end

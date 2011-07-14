@@ -63,12 +63,12 @@ class Member < ActiveRecord::Base
     self.update_attribute(:kandies_count, kc)
   end
   
-  def has_badge?(badge_title)
-    badges.collect(&:title).include?(badge_title)
+  def has_badge?(badge)
+    badges.collect(&:title).include?(badge.title)
   end
 
-  def self.grant_badge(member_token, badge)
-    self.find_by_member_token(member_token).badges << badge 
+  def can_has_badge?(badge)
+    return badge.repeatable? ? true : !has_badge?(badge)
   end
 
 end

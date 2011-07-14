@@ -1,5 +1,5 @@
 class NotificationsController < ApplicationController
-  before_filter :require_app
+  before_filter :require_auth
   
   def index
     @notifications = @app.notifications.all :limit => Settings.apps.notifications_limit

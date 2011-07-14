@@ -1,8 +1,8 @@
 class MembersController < ApplicationController
-  before_filter :require_app
+  before_filter :require_auth
   CSV_FIELDS = %w(member_token kandies_count updated_at)
   
-  def show
+  def show    
     @member = @app.members.find_by_member_token(params[:id])
     
     if @member     
@@ -13,6 +13,7 @@ class MembersController < ApplicationController
   end
   
   def index
+
     params[:order] ||= 'kandies_count DESC'
     params[:per_page] ||= Settings.apps.members.csv_limit
     params[:page] ||= 1

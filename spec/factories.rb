@@ -17,6 +17,7 @@ FactoryGirl.define do
   end
   
   factory :member do 
+    app
     member_token { Digest::MD5.hexdigest(Factory.next(:email))  }
   end
   
@@ -74,7 +75,6 @@ FactoryGirl.define do
     app { activity.app } 
     
     data {
-
       h = Hash.new
       h[:actor_token] = Digest::MD5.hexdigest(Factory.next(:email))
       h[:transfer_recipient_token] = Digest::MD5.hexdigest(Factory.next(:email))
@@ -82,13 +82,35 @@ FactoryGirl.define do
       h[:do_transfer] = true
       h[:reward_amount] = 10
       h[:transfer_amount] = 1
-
       h
-
     }
+  end
+
+
+  factory :newbish_badge, :class => Badge do
+    app
+    badge_type 'newbish'
+    title 'Newbish badge'
+    description 'Foo'
+    verb 'signup'
+    qtty '1'
+    badge_scope 1
+    predicate_types '*'
+    variant 'badge'
+    repeatable false
+    
+    factory :diversity_badge do
+      badge_type 'diversity'
+      title 'Diversity Badge'
+      verb 'post'
+      qtty '5'
+      badge_scope 1
+      predicate_types 'foo,bar'
+    end
     
     
   end
+
 
 
 end  

@@ -21,7 +21,7 @@ end
 
 describe MembersController, 'get /member' do
   before do
-    @member = Member.make(:kandies_count => 20)
+    @member = create(:member, :kandies_count => 20)
     
   
     authenticate_with_http_digest(@member.app.app_key, @member.app.app_token, @member.app.api_auth_realm)    
@@ -55,8 +55,8 @@ end
 
 describe MembersController, 'get /members' do
   before do
-    @app = App.make
-    10.times { Member.make(:app => @app) }
+    @app = create(:app)
+    10.times { create(:member, :app => @app) }
     
     authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)    
     

@@ -4,7 +4,7 @@ class Activity < ActiveRecord::Base
   require 'hammurabi'
   #include Kandypot::Hammurabi
   
-  API_PARAMS = [:actor_token, :verb, :published, :object_token, :object_url, :target_token, :target_url, :target_author_token, :mood, :intensity]
+  API_PARAMS = [:actor_token, :verb, :published, :object_token, :object_type, :object_url, :target_token, :target_url, :target_author_token, :target_type, :mood, :intensity]
   
   MOOD_TYPES = [1, -1, 0]
   
@@ -83,6 +83,19 @@ class Activity < ActiveRecord::Base
     else 
       raise Exceptions::Kandypot::UnknownActivityCategory, self.inspect
     end
+  end
+  
+  def predicate_attr
+    p = (category?(:creation) ? 'object' : 'target')
+    "#{p}_type".to_sym
+  end
+  
+  def predicate_type
+    read_attribute(predicate_attr)
+  end
+  
+  def category?(cat)
+    category == cat.to_s
   end
 
   def no_object?

@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110523110133) do
+ActiveRecord::Schema.define(:version => 20110708093504) do
 
   create_table "activities", :force => true do |t|
     t.integer  "app_id"
@@ -68,9 +68,19 @@ ActiveRecord::Schema.define(:version => 20110523110133) do
     t.string   "title"
     t.string   "description"
     t.text     "params"
-    t.integer  "status",      :limit => 1
+    t.integer  "status",          :limit => 1
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "category"
+    t.string   "verb"
+    t.string   "predicate_types"
+    t.integer  "qtty"
+    t.string   "variant",         :limit => 1
+    t.string   "period_type",     :limit => 2
+    t.string   "period_variant",  :limit => 2
+    t.integer  "badge_scope",     :limit => 2
+    t.boolean  "repeatable",                   :default => false, :null => false
+    t.float    "p",                            :default => 1.0,   :null => false
   end
 
   create_table "delayed_jobs", :force => true do |t|

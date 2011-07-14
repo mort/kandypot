@@ -1,27 +1,21 @@
-# Filters added to this controller apply to all controllers in the application.
-# Likewise, all the methods added will be available for all controllers.
-
 class ApplicationController < ActionController::Base
-  helper :all # include all helpers, all the time
-  #protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  
-  # Scrub sensitive parameters from your log
+  helper :all 
   filter_parameter_logging :signature, :app_token
 
   private
   
-  def require_app
-
+  def require_auth
+    
      @app = App.find_by_nicename params[:app_id]
 
      unless @app.nil?   
        realm = @app.api_auth_realm
-       success = authenticate_or_request_with_http_digest(realm) do |app_key|
-                 Digest::MD5::hexdigest([@app.app_key, realm, @app.app_token].join(":")) if @app.app_key == app_key
-               end
-
-       request_http_digest_authentication(Settings.auth.realm, "Authentication failed") unless success
-
+       
+       success = authenticate_or_request_with_http_digest(realm) do |app_key|     
+         @app.api_digest_auth if (@app.app_key == app_key)
+       end
+      
+        request_http_digest_authentication(Settings.auth.realm, "Authentication failed") unless success
      else
        render :text => '', :status => :not_found 
      end  

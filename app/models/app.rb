@@ -46,7 +46,7 @@ class App < ActiveRecord::Base
   end
   
   def authenticate(data, signature)
-    OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, self.app_key, data)  == signature
+    OpenSSL::HMAC.hexdigest(OpenSSL::Digest::SHA1.new, self.app_key, data) == signature
   end
   
   def self.pack_up_params_for_signature(params) 
@@ -77,6 +77,10 @@ class App < ActiveRecord::Base
   
   def api_auth_realm
     "#{nicename}@#{Settings.auth.realm}"
+  end
+  
+  def api_digest_auth
+    Digest::MD5::hexdigest([app_key, api_auth_realm, app_token].join(":")) 
   end
     
   private
