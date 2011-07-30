@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110708093504) do
+ActiveRecord::Schema.define(:version => 20110727100731) do
 
   create_table "activities", :force => true do |t|
     t.integer  "app_id"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(:version => 20110708093504) do
     t.integer  "member_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "activity_uuid", :limit => 36, :null => false
   end
 
   create_table "badges", :force => true do |t|
@@ -105,10 +106,11 @@ ActiveRecord::Schema.define(:version => 20110708093504) do
   create_table "kandy_ownerships", :force => true do |t|
     t.integer  "member_id"
     t.integer  "kandy_id"
-    t.integer  "status",     :limit => 1, :default => 1, :null => false
+    t.integer  "status",        :limit => 1,  :default => 1, :null => false
     t.datetime "expired_at"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "activity_uuid", :limit => 36,                :null => false
   end
 
   create_table "members", :force => true do |t|

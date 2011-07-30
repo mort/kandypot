@@ -16,23 +16,29 @@ class KandyOwnership < ActiveRecord::Base
   belongs_to :kandy
   belongs_to :member
   
-  STATUSES = [:expired, :active]
+  STATUSES = {:expired => 0, :active => 1}
   
-  STATUSES.each_with_index do |status, i|
-    options = {:conditions => {:status => i}} 
-    self.send(:named_scope, status, options)
-    
-    n = "#{status}?"
-    
-    define_method(n.to_sym) { 
-      (self.status == i) 
+  STATUSES.each do |k,v|
+    self.send(:named_scope, k, {
+      :conditions => {:status => v}
+      })
+        
+    define_method("#{k.to_s}?") { 
+      (self.status == v) 
     }
         
   end
   
-  
+  before_create :expire_current
+    
   def expire
-    self.update_attributes(:status => STATUSES.index(:expired), :expired_at => Time.now)
+    self.update_attributes(:status => STATUSES[:expired], :expired_at => Time.now)
+  end
+  
+  private
+  
+  def expire_current
+    kandy.current_ownership.expire unless kandy.current_ownership.nil?
   end
   
 end

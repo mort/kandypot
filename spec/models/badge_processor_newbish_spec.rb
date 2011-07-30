@@ -41,7 +41,7 @@ describe BadgeProcessors::Newbish do
       Activity.should_receive(:count).with(anything()).and_return(c)
       @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
-      @badge.should_receive(:grant).with(@member)
+      @badge.should_receive(:grant).with(@member, @act)
     
       @processor.process
       @processor.concede.should be_true
@@ -64,7 +64,7 @@ describe BadgeProcessors::Newbish do
       Activity.should_receive(:count).with(anything()).and_return(c)
       @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
-      @badge.should_receive(:grant).with(@member)
+      @badge.should_receive(:grant).with(@member, @act)
     
       @processor.process
       @processor.concede.should be_true
@@ -76,7 +76,7 @@ describe BadgeProcessors::Newbish do
       
       @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
-      @badge.should_receive(:grant).with(@member)
+      @badge.should_receive(:grant).with(@member, @act)
     
       @processor.process
       @processor.concede.should be_true
@@ -87,7 +87,7 @@ describe BadgeProcessors::Newbish do
       Activity.should_receive(:count).with(anything()).and_return(c)
       @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(false)
       Member.should_not_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
-      @badge.should_not_receive(:grant).with(@member)
+      @badge.should_not_receive(:grant).with(@member, @act)
     
       @processor.process
       @processor.concede.should be_false
@@ -98,7 +98,7 @@ describe BadgeProcessors::Newbish do
       Activity.should_receive(:count).with(anything()).and_return(c)
       @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(false)
       Member.should_not_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
-      @badge.should_not_receive(:grant).with(@member)
+      @badge.should_not_receive(:grant).with(@member, @act)
     
       @processor.process
       @processor.concede.should be_false

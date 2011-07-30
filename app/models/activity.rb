@@ -1,8 +1,10 @@
 require 'uuid'
+require 'hammurabi'
 
 class Activity < ActiveRecord::Base
-  require 'hammurabi'
   #include Kandypot::Hammurabi
+  
+  attr_accessor :op_data
   
   API_PARAMS = [:actor_token, :verb, :published, :object_token, :object_type, :object_url, :target_token, :target_url, :target_author_token, :target_type, :mood, :intensity]
   
@@ -35,12 +37,14 @@ class Activity < ActiveRecord::Base
   
   # If the target is not a person, we need info about its author
   validates_presence_of :target_author_token, :if =>  Proc.new {|act| act.content_target? }
+  
+  has_one :operation_log
         
   after_create do |activity|
     #activity.send_later(:judge)
-    #activity.judge
+    activity.process
   end
-  
+    
   def validate
     validate_reward_setting(verb, object_type)
   end
@@ -131,13 +135,32 @@ class Activity < ActiveRecord::Base
     verb.to_sym == verb_sym
   end
   
-  def judge
-    Hammuraby.new(self).judge
+  def process
+    judge 
+    process_badges 
+    persist_op unless op_data.blank?
   end
+  
+  def process_badges
+    badges = app.badges
+    
+    badges.each do |badge| 
+      badge.process(self) 
+    end unless badges.blank?
+  end
+  
+  
+  def judge
+    Hammurabi.new(self).judge
+  end
+  
   
   private
   
-
+  def persist_op
+    OperationLog.create!(:data => op_data, :activity => self, :app => app)
+  end
+  
   def validate_reward_setting(verb, object_type = nil)
     object_type.present? ? validate_verb_object_type(verb, object_type) :  validate_verb(verb)
   end

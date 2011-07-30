@@ -45,24 +45,23 @@ class Member < ActiveRecord::Base
 
   def receive_kandies(amount, activity_uuid)
     return false unless amount > 0
-    amount.times { self.kandies.create }
+    amount.times do 
+      k = Kandy.create
+      kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid)
+    end
   end
   
   def transfer_kandies(amount, recipient, activity_uuid)
     return false unless amount < self.kandies.count
-    transfer_kandies = self.kandies.pick(amount, :fifo)
-    
-    transfer_kandies.each do |k|
-      k.current_ownership.expire
-      recipient.kandies << k
-    end     
+        
+    self.kandies.pick(amount, :fifo).each { |k| kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid) }
+  end
+
+  def receive_badge(badge, activity_uuid)
+    badge_grants.create(:activity_uuid => activity_uuid, :badge_id => badge.id) if can_has_badge?(badge)
   end
     
-  def update_kandy_cache
-    kc = self.kandies.count
-    self.update_attribute(:kandies_count, kc)
-  end
-  
+
   def has_badge?(badge)
     badges.collect(&:title).include?(badge.title)
   end
@@ -70,5 +69,11 @@ class Member < ActiveRecord::Base
   def can_has_badge?(badge)
     return badge.repeatable? ? true : !has_badge?(badge)
   end
+  
+  def update_kandy_cache
+    kc = self.kandies.count
+    self.update_attribute(:kandies_count, kc)
+  end
+  
 
 end

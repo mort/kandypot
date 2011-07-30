@@ -61,29 +61,27 @@ FactoryGirl.define do
       h[:do_reward] = true
       h[:do_transfer] = false
       h[:reward_amount] = 10
+      h[:activity_uuid] = activity.uuid
       
       h
-      
     }
     
-  end
+    factory :transfer_op, :class => OperationLog do
 
-  
-    
-  factory :transfer_op, :class => OperationLog do
-    activity
-    app { activity.app } 
-    
-    data {
-      h = Hash.new
-      h[:actor_token] = Digest::MD5.hexdigest(Factory.next(:email))
-      h[:transfer_recipient_token] = Digest::MD5.hexdigest(Factory.next(:email))
-      h[:do_reward] = true
-      h[:do_transfer] = true
-      h[:reward_amount] = 10
-      h[:transfer_amount] = 1
-      h
-    }
+       data {
+         h = Hash.new
+         h[:actor_token] = Digest::MD5.hexdigest(Factory.next(:email))
+         h[:transfer_recipient_token] = Digest::MD5.hexdigest(Factory.next(:email))
+         h[:do_reward] = true
+         h[:do_transfer] = true
+         h[:reward_amount] = 10
+         h[:transfer_amount] = 1
+         h[:activity_uuid] = activity.uuid
+         
+         h
+       }
+     end
+      
   end
 
 
@@ -112,26 +110,15 @@ FactoryGirl.define do
   end
 
 
+  factory :kandy_ownership do
+    kandy
+    member
+    activity_uuid "foo"
+  end
+  
+  factory :kandy do
+  end
+
 
 end  
-  #
-  #  id                  :integer(4)      not null, primary key
-  #  app_id              :integer(4)
-  #  processed_at        :datetime
-  #  proccessing_status  :integer(2)
-  #  ip                  :string(15)      not null
-  #  category            :string(25)      not null
-  #  uuid                :string(36)      not null
-  #  published           :datetime        not null
-  #  actor_token         :string(32)      not null
-  #  verb                :string(255)     not null
-  #  object_type         :string(255)
-  #  object_token        :string(255)
-  #  object_url          :string(255)
-  #  object_author_token :string(255)
-  #  mood                :string(25)
-  #  intensity           :integer(2)
-  #  created_at          :datetime
-  #  updated_at          :datetim
-  
 

@@ -32,7 +32,7 @@ module BadgeProcessors
   
         if @concede
           member = Member.find_by_member_token(@activity.actor_token)
-          @badge.grant(member)           
+          @badge.grant(member, @activity)           
         end
       end
         

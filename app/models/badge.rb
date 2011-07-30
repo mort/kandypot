@@ -40,9 +40,15 @@ class Badge < ActiveRecord::Base
     processor.new(activity, self).process
   end
   
-  def grant(member)
+  def grant(member, activity)
     return false unless member.can_has_badge?(self)
-    member.badges << self 
+    activity.op_data ||= {}
+    activity.op_data[:do_badges] = true
+    
+    activity.op_data[:badges] ||= {}
+    activity.op_data[:badges][member.member_token] = {
+      :badge_title => title, :badge_description => description, :badge_id => id
+       }
   end
   
   private

@@ -1,6 +1,6 @@
 module BadgeProcessors
-  class Welcome
-    include BadgeProcessors::Aux
+
+  class Welcome < Processor
     
     attr_reader :cond_array, :cond_params, :cond_str, :concede, :badge, :activity
     

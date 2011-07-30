@@ -12,25 +12,18 @@
      
       @do_reward = @do_transfer = false
       @modulated_p = @reward_amount = @transfer_amount = @transfer_recipient_token = nil
-
+      @op_data = {}
     end
-    
-    
+      
     def judge
             
       case @activity.category 
         when 'singular', 'creation'
           reward(@app, @actor, @p, false)
         when 'reaction'
-          reward(@app, @actor, @p, true) { 
-            @transfer_recipient_token = @activity.target_author_token
-            subject = @activity.category 
-          }
+          reward(@app, @actor, @p, true) { @transfer_recipient_token = @activity.target_author_token }
         when 'interaction'
-          reward(@app, @actor, @p, true) { 
-            @transfer_recipient_token = @activity.object_token 
-            subject = @activity.category 
-          }
+          reward(@app, @actor, @p, true) { @transfer_recipient_token = @activity.target_token }
         else
          raise Exceptions::UnknownActivity, method_name
       end
@@ -52,33 +45,27 @@
         data[:transfer_recipient_token] = @transfer_recipient_token
       end
       
-      op = OperationLog.create!(:data => data, :activity => @activity, :app => @app)
-      op
-      
+      @activity.op_data = data
+      data
     end
+    
+
     
     private
     
-    def reward(app, actor, p, with_transfer = true, &block)
+    def reward(app, actor, p, with_transfer = true)
 
        max = app.settings.probabilities.max
        min = app.settings.probabilities.min
   
-       @modulated_p = Trickster::modulate(p, @activity.mood, @activity.intensity, max, min) 
+       @modulated_p = Trickster::modulate(:p => p, :mood => @activity.mood, :intensity => @activity.intensity, :max => max, :min => min) 
        @reward_amount = Trickster::whim(calculate_reward_amount, @modulated_p)
 
        if @reward_amount
          @do_reward = true
-             
          @transfer_amount = calculate_transfer_amount
-
-         yield(block) if block
-
-         if with_transfer
-           transfer_recipient = app.members.find_or_create_by_member_token(@transfer_recipient_token)          
-           @do_transfer = true unless (actor == transfer_recipient)
-         end
-      
+         yield if block_given?
+         @do_transfer = (with_transfer && (@activity.actor_token != @transfer_recipient_token))
        end
 
     end
@@ -87,16 +74,14 @@
       percentage =  @app.settings.percentages.send(:default)
       ((@reward_amount.to_f*percentage.to_f/100)).ceil
     end
-    
-    
+        
     def calculate_reward_amount
       t = @activity.target_type || @activity.object_type || :default
       @app.settings.rewards.send(@activity.verb).send(t)
       rescue Settings::MissingSetting
         @app.settings.rewards.send(@activity.verb).send(:default)
     end
-    
-      
+          
   end
   
   module Exceptions

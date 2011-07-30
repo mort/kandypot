@@ -12,9 +12,9 @@ class ApplicationController < ActionController::Base
        realm = @app.api_auth_realm
        
        success = authenticate_or_request_with_http_digest(realm) do |app_key|     
-         @app.api_digest_auth if (@app.app_key == app_key)
-       end
-      
+           @app.api_digest_auth if (@app.app_key == app_key)
+         end
+        #success = true
         request_http_digest_authentication(Settings.auth.realm, "Authentication failed") unless success
      else
        render :text => '', :status => :not_found 

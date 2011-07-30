@@ -20,34 +20,33 @@ describe Hammurabi do
       
       @act = FactoryGirl.create(:act)
       @h = Hammurabi.new(@act)
-      @op = @h.judge
+      @data = @h.judge
     end
           
-    it 'should return an operation log' do
-      @op.should be_instance_of(OperationLog)  
-      @op.data.should be_instance_of(Hash)    
+    it 'should return an operation log data hash' do
+      @data.should be_instance_of(Hash)    
       
-      @op.data[:do_reward].should_not be_nil
-      assert [TrueClass,FalseClass].include?(@op.data[:do_reward].class), @op.data[:do_reward].class
+      @data[:do_reward].should_not be_nil
+      assert [TrueClass,FalseClass].include?(@data[:do_reward].class), @data[:do_reward].class
       
-      @op.data[:do_transfer].should_not be_nil
-      assert [TrueClass,FalseClass].include?(@op.data[:do_transfer].class), @op.inspect
+      @data[:do_transfer].should_not be_nil
+      assert [TrueClass,FalseClass].include?(@data[:do_transfer].class), @op.inspect
       
-      @op.data[:p].should_not be_nil
-      @op.data[:modulated_p].should_not be_nil
+      @data[:p].should_not be_nil
+      @data[:modulated_p].should_not be_nil
       
-      @op.data[:activity_uuid].should_not be_nil
-      @op.data[:activity_uuid].should == @act.uuid
+      @data[:activity_uuid].should_not be_nil
+      @data[:activity_uuid].should == @act.uuid
       
-      @op.data[:actor_token].should_not be_nil
-      @op.data[:actor_token].should == @act.actor_token
+      @data[:actor_token].should_not be_nil
+      @data[:actor_token].should == @act.actor_token
        
-      @op.activity.should_not be_nil
-      @op.activity == @act
-      
-      @op.app.should_not be_nil
-      @op.app == @act.app
-      
+      # @op.activity.should_not be_nil
+      #  @op.activity == @act
+      #  
+      #  @op.app.should_not be_nil
+      #  @op.app == @act.app
+       
        
     end
     
@@ -61,22 +60,22 @@ describe Hammurabi do
       context 'when rewarded' do
 
         before(:each) do
-          Trickster.should_receive(:modulate).with(anything(), anything(), anything(), anything(), anything()).and_return(1)          
+          Trickster.should_receive(:modulate).with(anything()).and_return(1)          
           @h = Hammurabi.new(@act)
           @h.stub!(:calculate_reward_amount).and_return(10)
-          @op = @h.judge
+          @data = @h.judge
         end
         
          it 'should mark do_reward as true' do
-           @op.data[:do_reward].should == true
+           @data[:do_reward].should == true
          end
 
          it 'should mark do_transfer as false' do
-           @op.data[:do_transfer].should == false
+           @data[:do_transfer].should == false
          end
 
          it 'should have a reward amount' do
-           @op.data[:reward_amount].should == 10
+           @data[:reward_amount].should == 10
          end
 
       end
@@ -84,23 +83,23 @@ describe Hammurabi do
       context 'when no rewarded' do
 
         before(:each) do
-          Trickster.should_receive(:modulate).with(anything(), anything(), anything(), anything(), anything()).and_return(0)
+          Trickster.should_receive(:modulate).with(anything()).and_return(0)
           @h = Hammurabi.new(@act)
           @h.stub!(:reward_amount).and_return(10)
           
-          @op = @h.judge
+          @data = @h.judge
         end
         
          it 'should mark reward as false' do
-           @op.data[:do_reward].should == false
+           @data[:do_reward].should == false
          end
 
          it 'should mark transfer as false' do
-           @op.data[:do_transfer].should == false
+           @data[:do_transfer].should == false
          end
 
          it 'should have no reward amount' do
-           @op.data[:reward_amount].should be_nil
+           @data[:reward_amount].should be_nil
          end
 
       end 
@@ -120,22 +119,22 @@ describe Hammurabi do
        context 'when rewarded' do
 
          before(:each) do
-           Trickster.should_receive(:modulate).with(anything(), anything(), anything(), anything(), anything()).and_return(1)          
+           Trickster.should_receive(:modulate).with(anything()).and_return(1)          
            @h = Hammurabi.new(@act)
            @h.stub!(:calculate_reward_amount).and_return(10)
-           @op = @h.judge
+           @data = @h.judge
          end
 
           it 'should mark do_reward as true' do
-            @op.data[:do_reward].should == true
+            @data[:do_reward].should == true
           end
 
           it 'should mark do_transfer as false' do
-            @op.data[:do_transfer].should == false
+            @data[:do_transfer].should == false
           end
 
           it 'should have a reward amount' do
-            @op.data[:reward_amount].should == 10
+            @data[:reward_amount].should == 10
           end
 
        end
@@ -143,23 +142,23 @@ describe Hammurabi do
        context 'when no rewarded' do
 
          before(:each) do
-           Trickster.should_receive(:modulate).with(anything(), anything(), anything(), anything(), anything()).and_return(0)
+           Trickster.should_receive(:modulate).with(anything()).and_return(0)
            @h = Hammurabi.new(@act)
            @h.stub!(:reward_amount).and_return(10)
 
-           @op = @h.judge
+           @data = @h.judge
          end
 
           it 'should mark reward as false' do
-            @op.data[:do_reward].should == false
+            @data[:do_reward].should == false
           end
 
           it 'should mark transfer as false' do
-            @op.data[:do_transfer].should == false
+            @data[:do_transfer].should == false
           end
 
           it 'should have no reward amount' do
-            @op.data[:reward_amount].should be_nil
+            @data[:reward_amount].should be_nil
           end
 
        end 
@@ -177,27 +176,27 @@ describe Hammurabi do
        context 'when rewarded' do
 
          before(:each) do
-           Trickster.should_receive(:modulate).with(anything(), anything(), anything(), anything(), anything()).and_return(1)          
+           Trickster.should_receive(:modulate).with(anything()).and_return(1)          
            @h = Hammurabi.new(@act)
            @h.stub!(:calculate_reward_amount).and_return(10)
            @h.stub!(:calculate_transfer_amount).and_return(1)
-           @op = @h.judge
+           @data = @h.judge
          end
 
           it 'should mark do_reward as true' do
-            @op.data[:do_reward].should == true
+            @data[:do_reward].should == true
           end
 
           it 'should mark do_transfer as true' do
-            @op.data[:do_transfer].should == true
+            @data[:do_transfer].should == true
           end
 
           it 'should have a reward amount' do
-            @op.data[:reward_amount].should == 10
+            @data[:reward_amount].should == 10
           end
           
           it 'should have a transfer amount' do
-            @op.data[:transfer_amount].should == 1
+            @data[:transfer_amount].should == 1
           end
 
        end
@@ -205,28 +204,28 @@ describe Hammurabi do
        context 'when no rewarded' do
 
          before(:each) do
-           Trickster.should_receive(:modulate).with(anything(), anything(), anything(), anything(), anything()).and_return(0)
+           Trickster.should_receive(:modulate).with(anything()).and_return(0)
            @h = Hammurabi.new(@act)
            @h.stub!(:calculate_reward_amount).and_return(10)
            @h.stub!(:calculate_transfer_amount).and_return(1)
 
-           @op = @h.judge
+           @data = @h.judge
          end
 
           it 'should mark reward as false' do
-            @op.data[:do_reward].should == false
+            @data[:do_reward].should == false
           end
 
           it 'should mark transfer as false' do
-            @op.data[:do_transfer].should == false
+            @data[:do_transfer].should == false
           end
 
           it 'should have no reward amount' do
-            @op.data[:reward_amount].should be_nil
+            @data[:reward_amount].should be_nil
           end
           
          it 'should have no transfer amount' do
-           @op.data[:transfer_amount].should be_nil
+           @data[:transfer_amount].should be_nil
          end 
 
        end 

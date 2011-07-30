@@ -1,6 +1,5 @@
 module BadgeProcessors
   class Processor
-    #include BadgeProcessors::Aux
   
     attr_reader :cond_array, :cond_params, :cond_str, :concede, :badge, :activity
   
@@ -60,7 +59,7 @@ module BadgeProcessors
       if right_count?(count, @qtty)
         @concede = true
         member = Member.find_by_member_token(@activity.actor_token)
-        @badge.grant(member)
+        @badge.grant(member, act)
       end
     
     end

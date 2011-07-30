@@ -6,14 +6,22 @@ class OperationLog < ActiveRecord::Base
   
   serialize :data
   
+  after_create :execute!
+  
   def executed?
     !executed_at.nil?
   end
   
-  def execute!
+  def execute!(force = false)
+    return if (executed? && !force)
+
     begin
-      execute_reward if data[:do_reward]
-      execute_transfer if data[:do_transfer]
+      
+      # Process each of the callbacks
+      %w(reward transfer badges).each do |s|
+        send("execute_#{s}") if data["do_#{s}".to_sym]
+      end
+
       mark_as_executed
     end
   end
@@ -28,10 +36,9 @@ class OperationLog < ActiveRecord::Base
     return unless data[:do_reward]
     
     actor_token = data[:actor_token]
-    uuid = data[:activity_uuid]
     
     actor = app.members.find_or_create_by_member_token(actor_token)
-    actor.receive_kandies(data[:reward_amount], uuid)
+    actor.receive_kandies(data[:reward_amount], activity.uuid)
   
   end
   
@@ -40,14 +47,24 @@ class OperationLog < ActiveRecord::Base
         
     actor_token = data[:actor_token]
     recipient_token = data[:transfer_recipient_token]
-    reward_amount = data[:reward_amount]
-    uuid = data[:activity_uuid]
-    
+    transfer_amount = data[:transfer_amount]
+        
     actor = app.members.find_or_create_by_member_token(actor_token)
     recipient = app.members.find_or_create_by_member_token(recipient_token)
+    
+    actor.transfer_kandies(transfer_amount, recipient, activity.uuid) 
 
-    actor.transfer_kandies(reward_amount, recipient, uuid)
-
+  end
+  
+  def execute_badges
+    return unless data[:do_badges]
+         
+    data[:badges].each do |member_token,b|
+      member = app.members.find_or_create_by_member_token(member_token)
+      badge = app.badges.find(b[:badge_id])
+      member.receive_badge(badge, activity.uuid) 
+    end 
+     
   end
   
 end

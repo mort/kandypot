@@ -3,17 +3,17 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe KandyOwnership do
   
   before(:each) do
-    @kandy_ownership = KandyOwnership.make
+    @ko = create(:kandy_ownership)
   end
   
-  it 'should be expirable' do
-    @kandy_ownership.should respond_to(:expire) 
+  it 'should not be expired' do
+    @ko.should_not be_expired
   end
-  
-  it 'should set the right status and expiration date at expiration' do
-    @kandy_ownership.expire
-    @kandy_ownership.status.should == KandyOwnership::STATUSES.index(:expired)
-    @kandy_ownership.expired_at.should_not be_nil
+      
+  it 'should expire the prior ownership on creation' do
+    @ko_two = create(:kandy_ownership, :kandy_id => @ko.kandy.id)
+    
+    KandyOwnership.find(@ko.id).should be_expired
   end
   
 end
