@@ -10,53 +10,40 @@ describe BadgeProcessors::Processor do
     @badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5)
      
     @act = create(:act, :app => @app, :actor_token => @member.member_token)
-    @processor = BadgeProcessors::Newbish.new(@act, @badge)
+    @processor = BadgeProcessors::Processor.new(@act, @badge)
   end
 
-  it 'should have been initialized correctly' do
-    @processor.badge.should == @badge
-    @processor.activity.should == @act
-    @processor.concede.should be_false
+  it 'should not concede with a failed coin toss' do
+    Trickster.should_receive(:coin_toss).with(@badge.p).and_return(false)
+    
+    @processor.concede?(2,2,@badge).should be_false 
   end
 
-  it 'should have the right conditions str' do
-    @processor.process
-    @processor.cond_str.include?("activities.app_id = ?").should be_true
-    @processor.cond_str.include?('activities.actor_token = ?').should be_true
-    @processor.cond_str.include?('activities.verb = ?').should be_true
-
+  it 'should concede with a good coin toss' do
+    @processor.should_receive(:right_count?).and_return(true)
+    Trickster.should_receive(:coin_toss).with(@badge.p).and_return(true)
+    
+    @processor.concede?(2,2,@badge).should be_true  
   end
-
-  it 'should have the right conditions params' do
-    @processor.process
-    @processor.cond_params.include?(@app.id).should be_true 
-    @processor.cond_params.include?(@member.member_token).should be_true
-    @processor.cond_params.include?(@badge.verb).should be_true
+    
+  it 'should guess right counts when the badge is not repeatable' do
+    badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5, :repeatable => false)
+    @processor.concede?(badge.qtty,badge.qtty,badge).should be_true  
   end
   
-  context 'with global scope' do
-    
-    before(:each) do
-      @app = create(:app)
-      @member = create(:member, :app => @app)
-      @badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5, :badge_scope => BadgeScope.find_by_name('global').id)
-       
-      @act = create(:act, :app => @app, :actor_token => @member.member_token)
-      @processor = BadgeProcessors::Newbish.new(@act, @badge)
-    end
-    
-    it 'should have the right conditions str' do
-      @processor.process
-      @processor.cond_str.include?("activities.app_id = ?").should be_false
-      @processor.cond_str.include?('activities.actor_token = ?').should be_false
-    end
+  it 'should guess bad counts when the badge is not repeatable' do
+    badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5, :repeatable => false)
+    @processor.concede?(badge.qtty*badge.qtty,badge.qtty,badge).should be_false        
+  end
   
-    it 'should have the right conditions params' do
-      @processor.process
-      @processor.cond_params.include?(@app.id).should be_false
-      @processor.cond_params.include?(@member.member_token).should be_false
-    end
-    
+  it 'should guess right counts when the badge is repeatable' do
+    badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5, :repeatable => true)
+    @processor.concede?(badge.qtty*badge.qtty,badge.qtty,badge).should be_true
+  end
+  
+  it 'should guess bad counts when the badge is repeatable' do
+    badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5, :repeatable => true)
+    @processor.concede?((badge.qtty*badge.qtty)-1,badge.qtty,badge).should be_false
   end
   
   

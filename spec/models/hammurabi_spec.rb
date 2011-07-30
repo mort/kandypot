@@ -133,7 +133,7 @@ describe Hammurabi do
             @data[:do_transfer].should == false
           end
 
-          it 'should have a reward amount' do
+          it 'should have a reward amount as per config' do
             @data[:reward_amount].should == 10
           end
 
@@ -191,12 +191,12 @@ describe Hammurabi do
             @data[:do_transfer].should == true
           end
 
-          it 'should have a reward amount' do
-            @data[:reward_amount].should == 10
-          end
-          
           it 'should have a transfer amount' do
             @data[:transfer_amount].should == 1
+          end
+          
+          it 'should have a reward amount of (reward - transfer)' do
+            @data[:reward_amount].should == 9
           end
 
        end

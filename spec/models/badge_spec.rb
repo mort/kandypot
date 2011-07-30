@@ -29,22 +29,29 @@ describe Badge do
     end
   
     it 'should be grantable' do
+      act = Activity.new
+      
       member = create(:member)
-      @badge.grant(member).should be_true
-      member.has_badge?(@badge).should be_true
+      @badge.grant(member, act).should be_true
     end
   
     it 'shouldnt be grantable twice if its not repeatable' do
+      act = mock_model(Activity)
+      act.stub!(:op_data).and_return({})
+      
       member = mock_model(Member)
       member.should_receive(:can_has_badge?).with(@badge).and_return(false)
-      @badge.grant(member).should be_false
+      @badge.grant(member, act).should be_false
     end
     
     it 'should be grantable twice if its repeatable' do
+      act = mock_model(Activity)
+      act.stub!(:op_data).and_return({})
+      
       member = create(:member)
       member.should_receive(:can_has_badge?).and_return(true)
       repeatable_badge = create(:newbish_badge, :repeatable => true)
-      repeatable_badge.grant(member).should be_true
+      repeatable_badge.grant(member,act).should be_true
     end
   
   

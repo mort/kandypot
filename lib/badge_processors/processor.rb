@@ -56,7 +56,7 @@ module BadgeProcessors
 
       count = Activity.count(:conditions => @cond_arr)
   
-      if right_count?(count, @qtty)
+      if concede?(count, @qtty, @badge)
         @concede = true
         member = Member.find_by_member_token(@activity.actor_token)
         @badge.grant(member, act)
@@ -64,7 +64,11 @@ module BadgeProcessors
     
     end
 
-    def right_count?(received, expected)
+    def concede?(count, qtty, badge)
+      Trickster.coin_toss(badge.p) && right_count?(count, qtty, badge)
+    end
+
+    def right_count?(received, expected, badge)
       badge.repeatable? ? (received % expected == 0) : (received == expected)
     end
   

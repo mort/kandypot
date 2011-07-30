@@ -45,6 +45,8 @@
         data[:transfer_recipient_token] = @transfer_recipient_token
       end
       
+      data[:reward_amount] = (@reward_amount - @transfer_amount) if @do_transfer
+            
       @activity.op_data = data
       data
     end
@@ -91,7 +93,11 @@
   
   class Trickster
     def self.whim(i, p = 0.8)
-      (rand < p) ? i : nil
+      coin_toss(p) ? i : nil
+    end
+    
+    def self.coin_toss(p = 0.5)
+      rand <= p
     end
 
     def self.modulate(options)

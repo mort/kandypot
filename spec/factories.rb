@@ -96,6 +96,7 @@ FactoryGirl.define do
     predicate_types '*'
     variant 'badge'
     repeatable false
+    p 1.0
     
     factory :diversity_badge do
       badge_type 'diversity'
@@ -104,6 +105,7 @@ FactoryGirl.define do
       qtty '5'
       badge_scope 1
       predicate_types 'foo,bar'
+      p 1.0
     end
     
     
