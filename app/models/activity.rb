@@ -2,7 +2,6 @@ require 'uuid'
 require 'hammurabi'
 
 class Activity < ActiveRecord::Base
-  #include Kandypot::Hammurabi
   
   attr_accessor :op_data
   
@@ -38,10 +37,9 @@ class Activity < ActiveRecord::Base
   # If the target is not a person, we need info about its author
   validates_presence_of :target_author_token, :if =>  Proc.new {|act| act.content_target? }
   
-  has_one :operation_log
+  has_one :operation_log, :dependent => :destroy
         
   after_create do |activity|
-    #activity.send_later(:judge)
     activity.process
   end
     

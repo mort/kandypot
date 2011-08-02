@@ -11,11 +11,8 @@ class ActivitiesController < ApplicationController
 
     @activity = @app.activities.build(activity_params)
     
-    logger.debug("Activity: valid? #{@activity.valid?} / #{@activity.errors.full_messages.inspect}")
-        
     if @activity.save
       @op = @activity.operation_log
-      logger.debug("OP: #{@op.inspect}")    
       render :template => 'operation_logs/show.json.rabl', :status => :created 
     else
       logger.debug("OP: #{@activity.errors.inspect}")    

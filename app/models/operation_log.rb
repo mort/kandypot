@@ -6,7 +6,9 @@ class OperationLog < ActiveRecord::Base
   
   serialize :data
   
-  after_create :execute!
+  after_create do |op|
+    op.send_later :execute!
+  end
   
   def executed?
     !executed_at.nil?

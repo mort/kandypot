@@ -5,17 +5,16 @@ class ApplicationController < ActionController::Base
   private
   
   def require_auth
-    
      @app = App.find_by_nicename params[:app_id]
-
+     
      unless @app.nil?   
        realm = @app.api_auth_realm
        
-       success = authenticate_or_request_with_http_digest(realm) do |app_key|     
-           @app.api_digest_auth if (@app.app_key == app_key)
-         end
-        #success = true
-        request_http_digest_authentication(Settings.auth.realm, "Authentication failed") unless success
+      success = authenticate_or_request_with_http_digest(realm) do |app_key|     
+        Digest::MD5::hexdigest([@app.app_key, @app.api_auth_realm, @app.app_token].join(":"))  if (@app.app_key == app_key)
+      end
+      
+      request_http_digest_authentication(@app.api_auth_realm, "Authentication failed") unless success
      else
        render :text => '', :status => :not_found 
      end  

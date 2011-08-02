@@ -275,17 +275,6 @@ describe ActivitiesController, 'create' do
          }
      end
      
-     it 'should create a badge grant' do
-
-
-        authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)
-
-        lambda{
-           post 'create', :subdomains => :app_id, :app_id => @app.nicename, :data => @data
-        }.should change(BadgeGrant, :count).by(1)
-
-     end
-     
      
      it "should give the right response" do
 
