@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110727100731) do
+ActiveRecord::Schema.define(:version => 20110802143513) do
 
   create_table "activities", :force => true do |t|
     t.integer  "app_id"
@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(:version => 20110727100731) do
     t.string   "verb"
     t.string   "predicate_types"
     t.integer  "qtty"
-    t.string   "variant",         :limit => 1
+    t.string   "variant"
     t.string   "period_type",     :limit => 2
     t.string   "period_variant",  :limit => 2
     t.integer  "badge_scope",     :limit => 2
@@ -112,6 +112,9 @@ ActiveRecord::Schema.define(:version => 20110727100731) do
     t.datetime "updated_at"
     t.string   "activity_uuid", :limit => 36,                :null => false
   end
+
+  add_index "kandy_ownerships", ["kandy_id", "status"], :name => "idx_on_kandy_id_status"
+  add_index "kandy_ownerships", ["kandy_id", "status"], :name => "index_kandy_ownerships_on_kandy_id_and_status"
 
   create_table "members", :force => true do |t|
     t.integer  "app_id"

@@ -63,7 +63,7 @@ class OperationLog < ActiveRecord::Base
          
     data[:badges].each do |member_token,b|
       member = app.members.find_or_create_by_member_token(member_token)
-      badge = app.badges.find(b[:badge_id])
+      badge = app.badges.find(b[:id])
       member.receive_badge(badge, activity.uuid) 
     end 
      

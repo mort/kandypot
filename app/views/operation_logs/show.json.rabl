@@ -10,6 +10,9 @@ node :method do
   [params[:controller], params[:action]].join('/')
 end
 
+node :context do
+  params[:context]
+end if params[:context]
 
 child @op => :data do
  
@@ -21,7 +24,6 @@ child @op => :data do
 
    node :kind do
     'OperationLog'
-    # DateTime.parse(@activity.updated_at.to_s).rfc3339
    end
  
 end

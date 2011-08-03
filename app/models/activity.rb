@@ -140,9 +140,10 @@ class Activity < ActiveRecord::Base
   end
   
   def process_badges
-    badges = app.badges
+    badges = app.badges.on
     
     badges.each do |badge| 
+      logger.info "Badge: #{badge.title}"
       badge.process(self) 
     end unless badges.blank?
   end

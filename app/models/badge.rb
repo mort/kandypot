@@ -10,6 +10,8 @@ class Badge < ActiveRecord::Base
   
   validates_presence_of :period_type, :if => Proc.new {|b| b.badge_type?(:cycle) || b.badge_type?(:streak)}
   
+  named_scope :on, :conditions => {:status => 1}
+  named_scope :off, :conditions => {:status => 0}
 
   def validate
 
@@ -23,6 +25,14 @@ class Badge < ActiveRecord::Base
     
   end
   
+  def turn_on
+    update_attribute(:status => 1)
+  end
+
+  def turn_off
+    update_attribute(:status => 0)
+  end
+
   
   def badge_type?(t)
     badge_type == t.to_s
@@ -47,8 +57,13 @@ class Badge < ActiveRecord::Base
     
     activity.op_data[:badges] ||= {}
     activity.op_data[:badges][member.member_token] = {
-      :badge_title => title, :badge_description => description, :badge_id => id
-       }
+      :title => title, 
+      :description => description, 
+      :id => id, 
+      :variant => variant,
+      :type => badge_type,
+      :grant_activity_date => activity.published.to_s
+    }
   end
   
   private
