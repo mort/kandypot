@@ -48,6 +48,8 @@ describe Badge do
       act = mock_model(Activity)
       act.stub!(:op_data).and_return({})
       
+      act.stub!(:published).and_return(Time.now)
+      
       member = create(:member)
       member.should_receive(:can_has_badge?).and_return(true)
       repeatable_badge = create(:newbish_badge, :repeatable => true)
