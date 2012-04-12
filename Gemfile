@@ -1,5 +1,4 @@
 source 'http://rubygems.org'
-source 'http://gems.github.com'
 
 gem 'rails', '2.3.11'
 gem 'mysql', '2.8.1'
@@ -16,6 +15,7 @@ gem 'ruby-hmac', '0.4.0'
 gem 'uuid', '2.3.1'
 gem 'active_hash', "~> 0.9.5", :require => 'active_hash'
 gem 'rabl'
+gem 'test-unit', '1.2.3'
 
 group :development do
 	gem 'annotate', '2.4.0'
