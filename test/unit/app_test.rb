@@ -7,6 +7,7 @@ class AppTest < ActiveSupport::TestCase
   end
 end
 
+
 # == Schema Information
 #
 # Table name: apps
@@ -24,5 +25,14 @@ end
 #  status        :integer(2)      default(1), not null
 #  created_at    :datetime
 #  updated_at    :datetime
+#
+# Indexes
+#
+#  index_apps_on_name       (name) UNIQUE
+#  index_apps_on_nicename   (nicename) UNIQUE
+#  index_apps_on_url        (url) UNIQUE
+#  index_apps_on_app_key    (app_key) UNIQUE
+#  index_apps_on_app_token  (app_token) UNIQUE
+#  index_apps_on_ip         (ip) UNIQUE
 #
 

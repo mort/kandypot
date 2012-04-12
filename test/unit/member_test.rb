@@ -7,6 +7,7 @@ class MemberTest < ActiveSupport::TestCase
   end
 end
 
+
 # == Schema Information
 #
 # Table name: members
@@ -20,5 +21,9 @@ end
 #  kandy_ownerships_count :integer(4)      default(0), not null
 #  created_at             :datetime
 #  updated_at             :datetime
+#
+# Indexes
+#
+#  index_members_on_member_token  (member_token) UNIQUE
 #
 

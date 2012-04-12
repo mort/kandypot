@@ -1,5 +1,12 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+# one:
+#   column: value
+#
+# two:
+#   column: value
+
 # == Schema Information
-# Schema version: 20090618172719
 #
 # Table name: apps
 #
@@ -17,11 +24,13 @@
 #  created_at    :datetime
 #  updated_at    :datetime
 #
-
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
-
-# one:
-#   column: value
+# Indexes
 #
-# two:
-#   column: value
+#  index_apps_on_name       (name) UNIQUE
+#  index_apps_on_nicename   (nicename) UNIQUE
+#  index_apps_on_url        (url) UNIQUE
+#  index_apps_on_app_key    (app_key) UNIQUE
+#  index_apps_on_app_token  (app_token) UNIQUE
+#  index_apps_on_ip         (ip) UNIQUE
+#
+
