@@ -6,7 +6,6 @@ gem 'mysql', '2.8.1'
 gem "settingslogic", "2.0.6"
 gem 'wvanbergen-http_status_exceptions', '0.1.3', :require => 'http_status_exceptions'
 gem 'javan-whenever', '0.3.0'
-gem 'fastercsv', '1.5.4', :require => 'fastercsv'
 gem 'daemons', '1.0.10'
 gem "subdomain_routes", '0.3.1', :require => "subdomain_routes"
 gem 'hoptoad_notifier', '2.1.3'

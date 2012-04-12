@@ -20,7 +20,6 @@ GEM
     delorean (1.1.0)
       chronic
     factory_girl (2.0.0.rc1)
-    fastercsv (1.5.4)
     forgery (0.3.10)
       nokogiri (~> 1.4)
     growl (1.0.3)
@@ -83,7 +82,6 @@ DEPENDENCIES
   daemons (= 1.0.10)
   delorean (~> 1.1.0)
   factory_girl (~> 2.0.0.rc1)
-  fastercsv (= 1.5.4)
   forgery
   growl
   guard
