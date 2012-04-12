@@ -12,3 +12,5 @@ doc/plugins
 coverage/*
 db/*.sqlite3
 *.tmproj
+bin/
+*.swp
