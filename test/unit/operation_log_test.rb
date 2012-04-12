@@ -10,17 +10,17 @@ end
 
 
 
+
 # == Schema Information
 #
 # Table name: operation_logs
 #
-#  id             :integer(4)      not null, primary key
-#  member_id      :integer(4)
-#  sender_id      :integer(4)
-#  operation_type :string(255)     default(""), not null
-#  amount         :integer(4)      default(0), not null
-#  subject        :string(255)     default(""), not null
-#  created_at     :datetime
-#  updated_at     :datetime
+#  id          :integer(4)      not null, primary key
+#  created_at  :datetime
+#  updated_at  :datetime
+#  activity_id :integer(4)
+#  app_id      :integer(4)
+#  data        :text
+#  executed_at :datetime
 #
 

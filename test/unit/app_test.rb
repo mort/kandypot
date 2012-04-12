@@ -8,6 +8,8 @@ class AppTest < ActiveSupport::TestCase
 end
 
 
+
+
 # == Schema Information
 #
 # Table name: apps

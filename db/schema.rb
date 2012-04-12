@@ -136,13 +136,12 @@ ActiveRecord::Schema.define(:version => 20110727100731) do
   end
 
   create_table "operation_logs", :force => true do |t|
-    t.integer  "member_id"
-    t.integer  "sender_id"
-    t.string   "operation_type", :default => "", :null => false
-    t.integer  "amount",         :default => 0,  :null => false
-    t.string   "subject",        :default => "", :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "activity_id"
+    t.integer  "app_id"
+    t.text     "data"
+    t.datetime "executed_at"
   end
 
 end

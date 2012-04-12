@@ -79,6 +79,8 @@ class App < ActiveRecord::Base
   
 end
 
+
+
 # == Schema Information
 #
 # Table name: apps
