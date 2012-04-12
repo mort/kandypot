@@ -16,51 +16,51 @@
 
 class Member < ActiveRecord::Base
   belongs_to :app
-  
+
   has_many :kandy_ownerships
 
-  has_many :kandies, :through => :kandy_ownerships, :conditions => ['kandy_ownerships.status = ?', KandyOwnership::STATUSES.index(:active)] do
-    
+  has_many :kandies, :through => :kandy_ownerships, :conditions => ['kandy_ownerships.status = ?', KandyOwnership::STATUSES.key(:active)] do
+
 
     def pick(amount, method = :rand)
       options = {:limit => amount}
 
       case method
         when :fifo
-          find(:all, options.merge(:order => 'kandies.created_at ASC'))      
+          find(:all, options.merge(:order => 'kandies.created_at ASC'))
         when :lifo
-          find(:all, options.merge(:order => 'kandies.created_at DESC'))      
+          find(:all, options.merge(:order => 'kandies.created_at DESC'))
         when :rand
           random(:all, options)
       end
     end
 
   end
-  
+
   has_many :badge_grants
   has_many :badges, :through => :badge_grants
-  
+
   validates_presence_of :member_token
-  
+
 
   def receive_kandies(amount, activity_uuid)
     return false unless amount > 0
-    amount.times do 
+    amount.times do
       k = Kandy.create
       kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid)
     end
   end
-  
+
   def transfer_kandies(amount, recipient, activity_uuid)
     return false unless amount < self.kandies.count
-        
+
     self.kandies.pick(amount, :fifo).each { |k| kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid) }
   end
 
   def receive_badge(badge, activity_uuid)
     badge_grants.create(:activity_uuid => activity_uuid, :badge_id => badge.id) if can_has_badge?(badge)
   end
-    
+
 
   def has_badge?(badge)
     badges.collect(&:title).include?(badge.title)
@@ -69,11 +69,11 @@ class Member < ActiveRecord::Base
   def can_has_badge?(badge)
     return badge.repeatable? ? true : !has_badge?(badge)
   end
-  
+
   def update_kandy_cache
     kc = self.kandies.count
     self.update_attribute(:kandies_count, kc)
   end
-  
+
 
 end
