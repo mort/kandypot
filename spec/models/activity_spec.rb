@@ -1,4 +1,5 @@
-require File.dirname(__FILE__) + '/../spec_helper'
+require File.expand_path('../../spec_helper', __FILE__)
+
 
 describe Activity, 'singular' do
   before do
@@ -6,27 +7,27 @@ describe Activity, 'singular' do
    @act.stub!('validate_verb').and_return(true)
    @act.save!
   end
-  
+
   it 'should be valid' do
     @act.should be_valid
   end
-  
+
   it 'should know its own verb' do
     @act.verb_is?(@act.verb.to_sym).should == true
   end
-  
+
   it 'should have the right category' do
     @act.guess_category.should == 'singular'
   end
-  
+
   it 'should not have an object' do
     @act.no_object?.should == true
   end
-  
+
   it 'should not have a target' do
     @act.no_target?.should == true
   end
-    
+
 end
 
 
@@ -36,29 +37,29 @@ describe Activity, 'creation' do
    @act.stub!('validate_verb').and_return(true)
    @act.save!
   end
-  
+
   it 'should be valid' do
     @act.should be_valid
   end
-  
+
   it 'should know its own verb' do
     @act.verb_is?(@act.verb.to_sym).should == true
   end
-  
+
   it 'should have the right category' do
     @act.guess_category.should == 'creation'
   end
-    
+
   it 'should not have a target' do
     @act.has_object?.should == true
   end
-  
+
   it 'should have the right predicate' do
     @act.predicate_attr.should == :object_type
     @act.predicate_type.should == @act.object_type
   end
-  
-  
+
+
 end
 
 
@@ -68,16 +69,16 @@ describe Activity, 'reaction' do
    @act.stub!('validate_verb').and_return(true)
    @act.save!
   end
-  
+
   it 'should be valid' do
     @act.should be_valid
   end
-  
+
 
   it 'should have the right category' do
     @act.guess_category.should == 'reaction'
   end
-    
+
   it 'should have a target' do
     @act.has_target?.should == true
   end
@@ -85,20 +86,20 @@ describe Activity, 'reaction' do
   it 'should have a content target' do
     @act.content_target?.should == true
   end
-  
+
   it 'should have a url for the target' do
     @act.target_url.should_not be_nil
   end
-  
+
   it 'should have a token for the target author' do
     @act.target_author_token.should_not be_nil
   end
-  
+
   it 'should have the right predicate' do
     @act.predicate_attr.should == :target_type
     @act.predicate_type.should == @act.target_type
   end
-  
+
 
 end
 
@@ -109,15 +110,15 @@ describe Activity, 'interaction' do
    @act.stub!('validate_verb').and_return(true)
    @act.save!
   end
-  
+
   it 'should be valid' do
     @act.should be_valid
   end
-  
+
   it 'should have the right category' do
     @act.guess_category.should == 'interaction'
   end
-    
+
   it 'should have a target' do
     @act.has_target?.should == true
   end
@@ -125,67 +126,65 @@ describe Activity, 'interaction' do
   it 'should have a person target' do
     @act.person_target?.should == true
   end
-  
+
   it 'should have a token for the target' do
     @act.target_token.should_not be_nil
   end
-  
+
   it 'should not have a token for the target author' do
     @act.target_author_token.should be_nil
   end
-  
+
 
 end
 
 
 describe Activity, 'badly formed' do
 
-  
+
   it 'should not be valid without an actor_token and verb' do
     @act = build(:act, :actor_token => nil, :verb => nil)
     @act.should_not be_valid
   end
-  
+
   context 'creation' do
-  
+
     it 'should not be valid without an object' do
       @act = build(:creation_act, :object_url => nil)
       @act.should_not be_valid
     end
-    
+
   end
-  
+
   context 'reaction' do
-  
+
     it 'should not be valid without a target' do
       @act = build(:reaction_act, :target_url => nil)
       @act.should_not be_valid
     end
-    
+
     it 'should not be valid without a target author' do
       @act = build(:reaction_act, :target_author_token => nil)
       @act.should_not be_valid
     end
-  
+
   end
 
   context 'interaction' do
-  
+
     it 'should not be valid without a target' do
       @act = build(:interaction_act, :target_token => nil)
       @act.stub!('validate_verb').and_return(true)
-      
+
       @act.should_not be_valid
     end
-    
-  
+
+
   end
 
 
 end
 
-
-  
 
 # == Schema Information
 #
