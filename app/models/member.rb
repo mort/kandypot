@@ -62,6 +62,7 @@ class Member < ActiveRecord::Base
 
 end
 
+
 # == Schema Information
 #
 # Table name: members
@@ -79,5 +80,7 @@ end
 # Indexes
 #
 #  index_members_on_member_token  (member_token) UNIQUE
+#  members_app_id_kandies_count   (app_id,kandies_count)
+#  members_member_token_app_id    (member_token,app_id)
 #
 

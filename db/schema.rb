@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110727100731) do
+ActiveRecord::Schema.define(:version => 20120413083839) do
 
   create_table "activities", :force => true do |t|
     t.integer  "app_id"
@@ -124,6 +124,8 @@ ActiveRecord::Schema.define(:version => 20110727100731) do
     t.datetime "updated_at"
   end
 
+  add_index "members", ["app_id", "kandies_count"], :name => "members_app_id_kandies_count"
+  add_index "members", ["member_token", "app_id"], :name => "members_member_token_app_id"
   add_index "members", ["member_token"], :name => "index_members_on_member_token", :unique => true
 
   create_table "notifications", :force => true do |t|
@@ -135,6 +137,8 @@ ActiveRecord::Schema.define(:version => 20110727100731) do
     t.datetime "updated_at"
   end
 
+  add_index "notifications", ["app_id"], :name => "index_notifications_on_app_id"
+
   create_table "operation_logs", :force => true do |t|
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -143,5 +147,7 @@ ActiveRecord::Schema.define(:version => 20110727100731) do
     t.text     "data"
     t.datetime "executed_at"
   end
+
+  add_index "operation_logs", ["app_id"], :name => "index_operation_logs_on_app_id"
 
 end

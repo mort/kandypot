@@ -7,6 +7,7 @@ class NotificationTest < ActiveSupport::TestCase
   end
 end
 
+
 # == Schema Information
 #
 # Table name: notifications
@@ -18,5 +19,9 @@ end
 #  category   :string(255)     default(""), not null
 #  created_at :datetime
 #  updated_at :datetime
+#
+# Indexes
+#
+#  index_notifications_on_app_id  (app_id)
 #
 
