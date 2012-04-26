@@ -2,8 +2,8 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe NotificationsController, 'get' do
   before do
-    @app = App.make
-    2.times { Notification.make(:app => @app) }    
+    @app = App.create
+    2.times { Notification.create(:app => @app) }    
     
     authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)    
     
