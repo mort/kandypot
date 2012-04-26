@@ -2,7 +2,7 @@ module BadgeProcessors
   class Cycle
     include BadgeProcessors::Aux
   
-    def self.process(activity, badge)
+    def process(activity, badge)
       return if activity.category?(:singular)
 
       params = badge.params
