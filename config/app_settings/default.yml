@@ -17,6 +17,8 @@ defaults: &defaults
       default: 10
     dm:
       default: 10
+    friendship:
+      default: 5  
   percentages:  
     default: 10
     
