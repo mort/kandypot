@@ -3,7 +3,7 @@ class Member < ActiveRecord::Base
 
   has_many :kandy_ownerships
 
-  has_many :kandies, :through => :kandy_ownerships, :conditions => ['kandy_ownerships.status = ?', KandyOwnership::STATUSES.key(:active)] do
+  has_many :kandies, :through => :kandy_ownerships, :conditions => ['kandy_ownerships.status = ?', KandyOwnership::STATUSES[:active]] do
 
 
     def pick(amount, method = :rand)
@@ -38,7 +38,7 @@ class Member < ActiveRecord::Base
   def transfer_kandies(amount, recipient, activity_uuid)
     return false unless amount < self.kandies.count
 
-    self.kandies.pick(amount, :fifo).each { |k| kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid) }
+    self.kandies.pick(amount, :fifo).each { |k| recipient.kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid) }
   end
 
   def receive_badge(badge, activity_uuid)

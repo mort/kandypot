@@ -102,15 +102,15 @@ describe OperationLog do
   context 'executing a badgerified operation log' do
     before(:each) do
 
-      b = create(:newbish_badge)
+      @b = create(:newbish_badge)
 
       h = Hash.new
       h[:do_badges] = true
       h[:badges] = {}
 
-      h[:badges]["#{Digest::MD5.hexdigest(Factory.next(:email))}"] = {:badge_id => b.id, :badge_type => b.badge_type, :badge_title => b.title}
+      h[:badges]["#{Digest::MD5.hexdigest(Factory.next(:email))}"] = {:badge_id => @b.id, :badge_type => @b.badge_type, :badge_title => @b.title}
 
-      @op = create(:op, :data => h, :app => b.app)
+      @op = create(:op, :data => h, :app => @b.app)
     end
 
     it 'should execute the reward' do
@@ -121,11 +121,20 @@ describe OperationLog do
     it 'should process the badge' do
       app = mock_model(App)
 
-      @op.should_receive(:app).and_return(app)
+      members = []
+      badges = []
+      badges.should_receive(:find).and_return(@b)
+
+      @op.should_receive(:app).and_return(app, app)
       app.should_receive(:members).and_return(members)
+      app.should_receive(:badges).and_return(badges)
 
       member =  mock_model(Member)
-      members.should_receive(:find_or_create_by_member_token).with(@op.data[:badges]).and_return(member)
+      members.should_receive(:find_or_create_by_member_token).with(@op.data[:badges].keys.first).and_return(member)
+      # TODO: check #receive_badge parameters
+      member.should_receive(:receive_badge)
+
+      @op.execute!
     end
 
   end

@@ -2,7 +2,7 @@ require File.expand_path('../../spec_helper', __FILE__)
 
 describe Kandy do
   before(:each) do
-    @kandy = Kandy.make
+    @kandy = create(:kandy)
   end
 
   it 'should have an uuid' do

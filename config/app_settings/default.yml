@@ -7,24 +7,26 @@ defaults: &defaults
     deposits:
       initial: 1
   rewards:
-    signup: 
+    friendship:
+      default: 10
+    signup:
       default: 20
     post:
       default: 20
-    comment: 
+    comment:
       default: 15
-    like: 
+    like:
       default: 10
     dm:
       default: 10
-  percentages:  
+  percentages:
     default: 10
-    
+
 development:
   <<: *defaults
- 
+
 test:
   <<: *defaults
- 
+
 production:
   <<: *defaults
