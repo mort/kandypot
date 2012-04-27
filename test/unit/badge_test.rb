@@ -8,6 +8,7 @@ class BadgeTest < ActiveSupport::TestCase
 end
 
 
+
 # == Schema Information
 #
 # Table name: badges
@@ -28,7 +29,7 @@ end
 #  variant         :string(1)
 #  period_type     :string(2)
 #  period_variant  :string(2)
-#  badge_scope     :string(25)
+#  badge_scope     :integer(2)
 #  repeatable      :boolean(1)      default(FALSE), not null
 #  p               :float           default(1.0), not null
 #

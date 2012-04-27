@@ -1,5 +1,10 @@
+class Notification < ActiveRecord::Base
+  belongs_to :app
+  
+  validates_presence_of :title, :body, :category
+end
+
 # == Schema Information
-# Schema version: 20090702181526
 #
 # Table name: notifications
 #
@@ -11,9 +16,8 @@
 #  created_at :datetime
 #  updated_at :datetime
 #
+# Indexes
+#
+#  index_notifications_on_app_id  (app_id)
+#
 
-class Notification < ActiveRecord::Base
-  belongs_to :app
-  
-  validates_presence_of :title, :body, :category
-end

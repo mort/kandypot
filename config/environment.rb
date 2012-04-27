@@ -11,5 +11,4 @@ Rails::Initializer.run do |config|
 end
 
 require "will_paginate"
-require 'fastercsv'
 require 'active_hash'

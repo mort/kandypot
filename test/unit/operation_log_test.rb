@@ -9,6 +9,9 @@ end
 
 
 
+
+
+
 # == Schema Information
 #
 # Table name: operation_logs
@@ -20,5 +23,9 @@ end
 #  app_id      :integer(4)
 #  data        :text
 #  executed_at :datetime
+#
+# Indexes
+#
+#  index_operation_logs_on_app_id  (app_id)
 #
 
