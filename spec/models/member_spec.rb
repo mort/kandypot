@@ -38,7 +38,7 @@ describe Member, 'transferring kandies' do
 
     lambda {
       @sender.transfer_kandies(@amount, @recipient, 'foo')
-    }.should change(@sender.kandies, :count).by(@amount*-1)
+    }.should change(@sender.kandies, :count).by(-@amount)
 
   end
 
