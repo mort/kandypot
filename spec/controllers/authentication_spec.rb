@@ -18,28 +18,31 @@ end
 describe FooController, "require_auth filter" do
   context "when no param app_id is provides" do
     it "should return 404 status code" do
-      get :bar
-      response.response_code.should == 404
+      lambda {
+        get :bar, subdomains: :app_id
+      }.should raise_error(ActionController::RoutingError)
     end
   end
 
   context "when param app_id is invalid" do
     it "should return 404 status code" do
-      get :bar, app_id: '1234'
-      response.response_code.should == 404
+      lambda {
+        get :bar, app_id: '1234', subdomains: :app_id
+      }.should raise_error(ActionController::RoutingError)
     end
   end
 
   context "when param app_id is valid" do
     before do
       @app = create(:app)
+      @request.host = @app.nicename + '.test.host'
     end
 
     context "and app_key is invalid" do
       it "should not authorize the request" do
         authenticate_with_http_digest("", @app.app_token, @app.api_auth_realm)
 
-        get :bar, app_id: @app.nicename
+        get :bar, app_id: @app.nicename, subdomains: :app_id
 
         response.response_code.should == 401
       end
@@ -48,8 +51,6 @@ describe FooController, "require_auth filter" do
     context "and app_key is valid" do
       it "should not authorize the request" do
         authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)
-
-        @request.host = @app.nicename + '.test.host'
 
         get :bar, app_id: @app.nicename, subdomains: :app_id
 
