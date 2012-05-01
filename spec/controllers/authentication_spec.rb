@@ -10,7 +10,9 @@ class FooController < ApplicationController
 end
 
 ActionController::Routing::Routes.draw do |map|
-  map.connect 'foo/bar', :controller => 'foo', :action => 'bar'
+  map.subdomain :model => :app, :namespace => nil, :path_prefix => 'api' do |app|
+    app.connect 'foo/bar', :controller => 'foo', :action => 'bar'
+  end
 end
 
 describe FooController, "require_auth filter" do
@@ -47,7 +49,9 @@ describe FooController, "require_auth filter" do
       it "should not authorize the request" do
         authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)
 
-        get :bar, app_id: @app.nicename
+        @request.host = @app.nicename + '.test.host'
+
+        get :bar, app_id: @app.nicename, subdomains: :app_id
 
         response.response_code.should == 200
         response.body.should == "Bar!"
