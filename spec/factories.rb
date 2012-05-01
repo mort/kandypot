@@ -104,6 +104,7 @@ FactoryGirl.define do
     variant 'badge'
     repeatable false
     p 1.0
+    status 1
 
     factory :diversity_badge do
       badge_type 'diversity'
