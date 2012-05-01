@@ -6,7 +6,6 @@ describe NotificationsController, 'get' do
     2.times { create(:notification,:app => @app) }
 
     authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)
-    #request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Digest.encode_credentials("GET", @app.app_key, @app.app_token, true)
 
     get :index, :app_id => @app.nicename, :format => 'atom', :subdomains => :app_id
 

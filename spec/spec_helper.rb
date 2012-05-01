@@ -12,36 +12,35 @@ require 'factory_girl'
 Dir[File.expand_path(File.join(File.dirname(__FILE__),'support','**','*.rb'))].each {|f| require f}
 
 
+FactoryGirl.find_definitions
 
-FactoryGirl.find_definitions 
 
-
-Spec::Runner.configure do |config|  
+Spec::Runner.configure do |config|
   config.include Factory::Syntax::Methods
   config.mock_with :rspec
-  
+
   config.use_transactional_fixtures = false
 
   config.before :each do
     clean_db
   end
 end
-  
-  
+
+
 def clean_db
     (ActiveRecord::Base.connection.tables - %w{schema_migrations}).each do |table_name|
       ActiveRecord::Base.connection.execute "TRUNCATE TABLE #{table_name};"
     end
 end
-  
+
 
 class ActionController::TestCase
-  
+
   def authenticate_with_http_digest(user = 'admin', password = 'admin', realm = 'Application')
     unless ActionController::Base < ActionController::ProcessWithTest
       ActionController::Base.class_eval { include ActionController::ProcessWithTest }
     end
-    
+
     @controller.instance_eval %Q(
       alias real_process_with_test process_with_test
 
