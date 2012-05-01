@@ -1,11 +1,91 @@
 require File.expand_path('../../spec_helper', __FILE__)
 
 
+describe Activity do
+  it "should have an uuid by default" do
+    @act = build(:act)
+    @act.stub!('validate_verb').and_return(true)
+    @act.save!
+
+    @act.uuid.should_not be_blank
+  end
+
+  it "should call #process method after being creatd" do
+    @act = build(:act)
+    @act.stub!('validate_verb').and_return(true)
+    @act.should_receive(:process)
+    @act.save!
+  end
+
+  context "when its application has a badge" do
+    before do
+      @app = create(:app)
+      @member = create(:member, :app => @app)
+      @badge = create(:diversity_badge, :app => @app, :predicate_types => 'foo;bar;wadus')
+    end
+
+    describe "#process_badges method" do
+      it "should call #process on each badge" do
+        badges = double()
+        badges.stub('on').and_return([@badge])
+        @app.stub('badges').and_return(badges)
+        @badge.should_receive(:process).with(any_args()).and_return(true)
+        @act = create(:creation_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
+      end
+    end
+
+    it "should have an associated operation log when created" do
+      @act = create(:creation_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
+
+      @act.operation_log.should_not be_nil
+      @act.operation_log.app.should == @app
+      @act.operation_log.data.should == @act.op_data
+    end
+  end
+
+  describe "#process method" do
+    before do
+      @activity = Activity.new
+    end
+
+    it "should call #judge" do
+      @activity.stub(:process_badges).and_return(true)
+      @activity.stub(:persist_op).and_return(true)
+      @activity.should_receive(:judge)
+      @activity.send(:process)
+    end
+
+    it "should call #process_badges" do
+      @activity.stub(:judge).and_return(true)
+      @activity.stub(:persist_op).and_return(true)
+      @activity.should_receive(:process_badges)
+      @activity.send(:process)
+    end
+
+    it "should call #persist_opt" do
+      @activity.stub(:judge).and_return(true)
+      @activity.stub(:process_badges).and_return(true)
+      @activity.should_receive(:persist_op)
+      @activity.send(:process)
+    end
+  end
+
+  describe "#judge method" do
+    it "should call #judge method from Hammurabi" do
+      a = Activity.new
+      hammurabi = double()
+      Hammurabi.should_receive(:new).with(a).and_return(hammurabi)
+      hammurabi.should_receive(:judge).and_return(true)
+      a.send(:judge)
+    end
+  end
+end
+
 describe Activity, 'singular' do
   before do
-   @act = build(:act)
-   @act.stub!('validate_verb').and_return(true)
-   @act.save!
+    @act = build(:act)
+    @act.stub!('validate_verb').and_return(true)
+    @act.save!
   end
 
   it 'should be valid' do
@@ -33,9 +113,9 @@ end
 
 describe Activity, 'creation' do
   before do
-   @act = build(:creation_act)
-   @act.stub!('validate_verb').and_return(true)
-   @act.save!
+    @act = build(:creation_act)
+    @act.stub!('validate_verb').and_return(true)
+    @act.save!
   end
 
   it 'should be valid' do
@@ -59,21 +139,19 @@ describe Activity, 'creation' do
     @act.predicate_type.should == @act.object_type
   end
 
-
 end
 
 
 describe Activity, 'reaction' do
   before do
-   @act = build(:reaction_act)
-   @act.stub!('validate_verb').and_return(true)
-   @act.save!
+    @act = build(:reaction_act)
+    @act.stub!('validate_verb').and_return(true)
+    @act.save!
   end
 
   it 'should be valid' do
     @act.should be_valid
   end
-
 
   it 'should have the right category' do
     @act.guess_category.should == 'reaction'
@@ -100,15 +178,14 @@ describe Activity, 'reaction' do
     @act.predicate_type.should == @act.target_type
   end
 
-
 end
 
 
 describe Activity, 'interaction' do
   before do
-   @act = build(:interaction_act)
-   @act.stub!('validate_verb').and_return(true)
-   @act.save!
+    @act = build(:interaction_act)
+    @act.stub!('validate_verb').and_return(true)
+    @act.save!
   end
 
   it 'should be valid' do
@@ -135,12 +212,10 @@ describe Activity, 'interaction' do
     @act.target_author_token.should be_nil
   end
 
-
 end
 
 
 describe Activity, 'badly formed' do
-
 
   it 'should not be valid without an actor_token and verb' do
     @act = build(:act, :actor_token => nil, :verb => nil)
@@ -179,9 +254,7 @@ describe Activity, 'badly formed' do
       @act.should_not be_valid
     end
 
-
   end
-
 
 end
 

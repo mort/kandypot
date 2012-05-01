@@ -33,15 +33,12 @@ class Activity < ActiveRecord::Base
   validates_presence_of :target_token, :if => Proc.new {|act|  act.person_target? }
   validates_presence_of :target_url, :if => Proc.new {|act| act.content_target? }
 
-
   # If the target is not a person, we need info about its author
   validates_presence_of :target_author_token, :if =>  Proc.new {|act| act.content_target? }
 
   has_one :operation_log, :dependent => :destroy
 
-  after_create do |activity|
-    activity.process
-  end
+  after_create :process
 
   def validate
     validate_reward_setting(verb, object_type)
@@ -67,7 +64,6 @@ class Activity < ActiveRecord::Base
   def objectId
     'wadus'
   end
-
 
   def guess_category
     if (no_object? && no_target?)
@@ -133,6 +129,9 @@ class Activity < ActiveRecord::Base
     verb.to_sym == verb_sym
   end
 
+
+  private
+
   def process
     judge
     process_badges
@@ -147,13 +146,9 @@ class Activity < ActiveRecord::Base
     end unless badges.blank?
   end
 
-
   def judge
     Hammurabi.new(self).judge
   end
-
-
-  private
 
   def persist_op
     unless op_data.blank?
