@@ -23,10 +23,10 @@ end
 
 
 group :development, :test do
-  #gem 'rspec', "1.3.3",  :require => false
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard' 
   gem 'growl' 
+  gem "ruby-debug19", require: "ruby-debug"
 end
 
 group :test do
