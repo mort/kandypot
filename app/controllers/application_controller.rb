@@ -17,9 +17,8 @@ class ApplicationController < ActionController::Base
 
     unless success
       request_http_digest_authentication(@app.api_auth_realm, "Authentication failed") and return false
-    else
-      return true
     end
+    return true
   end
 
   def clean_params(my_params)
