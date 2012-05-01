@@ -2,6 +2,10 @@ class ApplicationController < ActionController::Base
   helper :all
   filter_parameter_logging :signature, :app_token
 
+  def remote_ip
+    request.env['HTTP_X_FORWARDED_FOR'] || request.env['HTTP_CLIENT_IP'] || request.env['REMOTE_ADDR']
+  end
+
   private
 
   def require_auth
