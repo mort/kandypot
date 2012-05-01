@@ -3,6 +3,7 @@ require File.expand_path('../../spec_helper', __FILE__)
 describe MembersController, 'get' do
   before do
     @member = create(:member)
+    @request.host = "#{@member.app.nicename}.example.com"
   end
 
   it 'should respond with not found to a bad app id' do
@@ -22,7 +23,7 @@ end
 describe MembersController, 'get /member' do
   before do
     @member = create(:member, :kandies_count => 20)
-
+    @request.host = "#{@member.app.nicename}.example.com"
 
     authenticate_with_http_digest(@member.app.app_key, @member.app.app_token, @member.app.api_auth_realm)
 
@@ -56,6 +57,7 @@ end
 describe MembersController, 'get /members' do
   before do
     @app = create(:app)
+    @request.host = "#{@app.nicename}.example.com"
     10.times { create(:member, :app => @app) }
 
     authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)
