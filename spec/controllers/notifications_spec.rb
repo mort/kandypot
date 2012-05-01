@@ -7,8 +7,8 @@ describe NotificationsController, 'get' do
 
     authenticate_with_http_digest(@app.app_key, @app.app_token, @app.api_auth_realm)
 
+    @request.host = @app.nicename + '.test.host'
     get :index, :app_id => @app.nicename, :format => 'atom', :subdomains => :app_id
-
   end
 
   it 'should respond with success' do
