@@ -113,7 +113,6 @@ ActiveRecord::Schema.define(:version => 20120413083839) do
     t.string   "activity_uuid", :limit => 36,                :null => false
   end
 
-  add_index "kandy_ownerships", ["kandy_id", "status"], :name => "idx_on_kandy_id_status"
   add_index "kandy_ownerships", ["kandy_id", "status"], :name => "index_kandy_ownerships_on_kandy_id_and_status"
 
   create_table "members", :force => true do |t|
