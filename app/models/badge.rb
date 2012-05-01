@@ -1,15 +1,15 @@
 class Badge < ActiveRecord::Base
   belongs_to :app
-  
+
   has_many :badge_grants
   has_many :members, :through => :badge_grants
-  
+
   validates_presence_of :title, :description, :verb, :badge_type, :variant, :qtty, :badge_scope, :predicate_types
-  
-  validates_inclusion_of :repeatable, :in => [true, false]  
-  
+
+  validates_inclusion_of :repeatable, :in => [true, false]
+
   validates_presence_of :period_type, :if => Proc.new {|b| b.badge_type?(:cycle) || b.badge_type?(:streak)}
-  
+
   named_scope :on, :conditions => {:status => 1}
   named_scope :off, :conditions => {:status => 0}
 
@@ -18,13 +18,13 @@ class Badge < ActiveRecord::Base
     if (badge_type?(:diversity?) && ((predicate_types.size < 2) || predicate_type == '*') )
       errors.add(:predicate_types, 'Need more than one predicate type for diversity type, and it can\'t be a wildcard')
     end
-    
+
     if (badge_type?(:diversity?) && repeatable)
       errors.add(:repeatable, 'Diversity badges cant be repeatable')
     end
-    
+
   end
-  
+
   def turn_on
     update_attribute(:status => 1)
   end
@@ -33,45 +33,45 @@ class Badge < ActiveRecord::Base
     update_attribute(:status => 0)
   end
 
-  
+
   def badge_type?(t)
     badge_type == t.to_s
   end
-  
+
   def predicate_types
     read_attribute(:predicate_types).split(';')
   end
-  
+
   def predicate_type
     predicate_types.first
   end
-  
+
   def process(activity)
     processor.new(activity, self).process
   end
-  
+
   def grant(member, activity)
     return false unless member.can_has_badge?(self)
     activity.op_data ||= {}
     activity.op_data[:do_badges] = true
-    
+
     activity.op_data[:badges] ||= {}
     activity.op_data[:badges][member.member_token] = {
-      :title => title, 
-      :description => description, 
-      :id => id, 
+      :title => title,
+      :description => description,
+      :id => id,
       :variant => variant,
       :type => badge_type,
       :grant_activity_date => activity.published.to_s
     }
   end
-  
+
   private
-  
+
   def processor
     "BadgeProcessors::#{badge_type.capitalize}".constantize
   end
-  
+
 
 end
 
