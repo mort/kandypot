@@ -1,0 +1,42 @@
+defaults: &defaults
+  app: default
+  probabilities:
+    default: 0.502
+    max: 0.95
+    min: 0.5
+    deposits:
+      initial: 1
+  rewards:
+    signup:
+      default: 20
+    post:
+      default: 20      
+    login:
+      default: 5
+    play:
+      default: 5
+      movimiento: 1
+      categoria: 2
+      retos: 1
+      presupuesto: 1     
+    update: 
+      default: 10
+      movimiento: 2
+    share:
+      default: 10
+    follow:
+      default: 5    
+    click:
+      default: 10
+      oferta: 30  
+  percentages:  
+    default: 10
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
