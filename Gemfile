@@ -26,7 +26,7 @@ group :development, :test do
   gem 'rb-fsevent', :require => false if RUBY_PLATFORM =~ /darwin/i
   gem 'guard' 
   gem 'growl' 
-  gem "ruby-debug19", require: "ruby-debug"
+  gem "ruby-debug19", :require => "ruby-debug"
 end
 
 group :test do
