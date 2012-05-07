@@ -70,8 +70,9 @@ class Activity < ActiveRecord::Base
       # Sign-ups, etc.
       'singular'
     elsif has_object? && verb_is?(:post)
-      # Content upload
       'creation'
+    elsif has_object? && verb_is_not?(:post)
+      'action'
     elsif person_target?
       # DMs, new friendship, etc.
       'interaction'
@@ -127,6 +128,10 @@ class Activity < ActiveRecord::Base
   def verb_is?(verb_sym)
     return false unless verb
     verb.to_sym == verb_sym
+  end
+  
+  def verb_is_not?(verb_sym)
+    !verb_is?(verb_sym)
   end
 
 

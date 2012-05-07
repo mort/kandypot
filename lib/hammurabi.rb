@@ -18,7 +18,7 @@
     def judge
             
       case @activity.category 
-        when 'singular', 'creation'
+        when 'singular', 'creation', 'action'
           reward(@app, @actor, @p, false)
         when 'reaction'
           reward(@app, @actor, @p, true) { @transfer_recipient_token = @activity.target_author_token }
