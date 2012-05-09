@@ -13,6 +13,12 @@ describe Member, 'receiving kandies' do
      @member.receive_kandies(@amount, 'uuid')
     }.should change(@member.kandies, :count).by(@amount)
   end
+  
+  it 'should increase kandies count by amount' do
+    lambda {
+     @member.receive_kandies(@amount, 'uuid')
+    }.should change(@member, :kandies_count).by(@amount)
+  end
 
   it 'should not create new kandies when amount is 0' do
     lambda {
@@ -41,6 +47,23 @@ describe Member, 'transferring kandies' do
     }.should change(@sender.kandies, :count).by(-@amount)
 
   end
+  
+  it 'should decrease the sender kandies count by amount' do
+
+    lambda {
+      @sender.transfer_kandies(@amount, @recipient, 'foo')
+    }.should change(@sender, :kandies_count).by(-@amount)
+
+  end
+  
+  it 'should increase the recipient kandies count by amount' do
+
+    lambda {
+      @sender.transfer_kandies(@amount, @recipient, 'foo')
+    }.should change(@recipient, :kandies_count).by(@amount)
+
+  end
+  
 
   it 'should increase the sender expired kandy ownerships by amount' do
 

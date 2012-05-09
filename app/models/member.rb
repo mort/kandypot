@@ -33,12 +33,23 @@ class Member < ActiveRecord::Base
       k = Kandy.create
       kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid)
     end
+    add_to_kandies_cache(amount)
   end
 
   def transfer_kandies(amount, recipient, activity_uuid)
     return false unless amount < self.kandies.count
 
     self.kandies.pick(amount, :fifo).each { |k| recipient.kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid) }
+    substract_from_kandies_cache(amount)
+    recipient.add_to_kandies_cache(amount)
+  end
+  
+  def add_to_kandies_cache(amount)
+    update_attribute(:kandies_count, kandies_count+amount)
+  end
+  
+  def substract_from_kandies_cache(amount)
+    update_attribute(:kandies_count, kandies_count-amount)
   end
 
   def receive_badge(badge, activity_uuid)
