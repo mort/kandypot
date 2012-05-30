@@ -12,6 +12,24 @@ class Badge < ActiveRecord::Base
 
   named_scope :on, :conditions => {:status => 1}
   named_scope :off, :conditions => {:status => 0}
+  
+  serialize :params
+  
+  RULES_PARAMS = %w(qtty period_qtty period_type period_variant predicate_types)
+  
+  RULES_PARAMS.each do |par|
+    
+    self.class_eval do
+      
+      define_method :"#{par}" do
+        params[par] || read_attribute(par.to_sym) 
+      end
+        
+    end
+      
+  end
+  
+  
 
   def validate
 
