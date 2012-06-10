@@ -22,6 +22,7 @@ defaults: &defaults
     update: 
       default: 10
       movimiento: 2
+      profile-bank: 10
     share:
       default: 10
     follow:
