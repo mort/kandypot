@@ -37,6 +37,7 @@ describe BadgeProcessors::Processor do
 
   it 'should guess right counts when the badge is repeatable' do
     badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5, :repeatable => true)
+    badge.should_receive(:max_level).and_return(5)
     @processor.concede?(badge.qtty*badge.qtty,badge.qtty,badge).should be_true
   end
 
