@@ -62,13 +62,14 @@ class Badge < ActiveRecord::Base
     processor.new(activity, self).process
   end
 
-  def grant(member, activity)
+  def grant(member, activity, level = nil)
     return false unless member.can_has_badge?(self)
     activity.op_data ||= {}
     activity.op_data[:do_badges] = true
 
     activity.op_data[:badges] ||= {}
-    activity.op_data[:badges][member.member_token] = {
+    
+    b = {
       :title => title,
       :description => description,
       :id => id,
@@ -76,6 +77,12 @@ class Badge < ActiveRecord::Base
       :type => badge_type,
       :grant_activity_date => activity.published.to_s
     }
+    
+    b[:level] = level if level
+    
+    activity.op_data[:badges][member.member_token] = b
+    
+    activity.op_data[:badges][member.member_token]
   end
 
   private

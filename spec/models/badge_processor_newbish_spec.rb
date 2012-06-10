@@ -41,7 +41,7 @@ describe BadgeProcessors::Newbish do
       Activity.should_receive(:count).with(anything()).and_return(c)
       @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
-      @badge.should_receive(:grant).with(@member, @act)
+      @badge.should_receive(:grant).with(@member, @act, nil)
 
       @processor.process
       @processor.concede.should be_true
@@ -102,7 +102,7 @@ describe BadgeProcessors::Newbish do
     before(:each) do
       @app = create(:app)
       @member = create(:member, :app => @app)
-      @badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5)
+      @badge = create(:newbish_badge, :repeatable => true, :app => @app, :badge_type => 'newbish', :qtty => 5, :params => {:max_level => 100})
 
       @act = create(:act, :app => @app, :actor_token => @member.member_token)
       @processor = BadgeProcessors::Newbish.new(@act, @badge)
@@ -111,9 +111,11 @@ describe BadgeProcessors::Newbish do
     it 'should grant the badge when the count is the expected' do
       c = @badge.qtty
       Activity.should_receive(:count).with(anything()).and_return(c)
+      @processor.should_receive(:level_check).with(c,@badge.qtty,@badge).and_return((@processor.level_calc(c,@badge.qtty) <= @badge.max_level))
+      @processor.should_receive(:level_calc).with(c,@badge.qtty).and_return((c/@badge.qtty))
       @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
-      @badge.should_receive(:grant).with(@member, @act)
+      @badge.should_receive(:grant).with(@member, @act, (c/@badge.qtty))
 
       @processor.process
       @processor.concede.should be_true
@@ -125,11 +127,27 @@ describe BadgeProcessors::Newbish do
 
       @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
-      @badge.should_receive(:grant).with(@member, @act)
+      @badge.should_receive(:grant).with(@member, @act,(c/@badge.qtty))
 
       @processor.process
       @processor.concede.should be_true
     end
+    
+    
+    it 'should have the right level when the count is a multiple of the expected' do
+      c = @badge.qtty*@badge.qtty
+      Activity.should_receive(:count).with(anything()).and_return(c)
+
+      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
+      @processor.should_receive(:level_check).with(c, @badge.qtty, @badge).and_return((c / @badge.qtty))
+      Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
+      @badge.should_receive(:grant).with(@member, @act, (c / @badge.qtty))
+
+      @processor.process
+      assert_equal @processor.level, (c / @badge.qtty)
+      @processor.concede.should be_true
+    end
+    
 
     it 'should not grant the badge when the count is over a multiple of the expected' do
       c = (@badge.qtty*@badge.qtty)+1
@@ -146,6 +164,18 @@ describe BadgeProcessors::Newbish do
       c = (@badge.qtty*@badge.qtty)-1
       Activity.should_receive(:count).with(anything()).and_return(c)
       @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(false)
+      Member.should_not_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
+      @badge.should_not_receive(:grant).with(@member, @act)
+
+      @processor.process
+      @processor.concede.should be_false
+    end
+
+    it 'should not grant the badge when the level exceeds max level' do
+      c = (@badge.qtty*@badge.qtty)-1
+      Activity.should_receive(:count).with(anything()).and_return(c)
+      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
+      @badge.should_receive(:max_level).and_return((c/@badge.qtty)-1)
       Member.should_not_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_not_receive(:grant).with(@member, @act)
 

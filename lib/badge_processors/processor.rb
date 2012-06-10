@@ -1,7 +1,7 @@
 module BadgeProcessors
   class Processor
   
-    attr_reader :cond_array, :cond_params, :cond_str, :concede, :badge, :activity
+    attr_reader :cond_array, :cond_params, :cond_str, :concede, :badge, :activity, :level
   
     def initialize(activity, badge)
       @activity = activity
@@ -10,6 +10,7 @@ module BadgeProcessors
       @cond_str = ''
       @concede = false
       @qtty = badge.qtty
+      @level = nil
       
       build_query
       
@@ -57,22 +58,34 @@ module BadgeProcessors
       count = Activity.count(:conditions => @cond_arr)
   
       if concede?(count, @qtty, @badge)
+        
+        # Let's assign a badge level if the badge is repeatable
+        @level = level_calc(count, @qtty) if @badge.repeatable? 
+        
         @concede = true
         member = Member.find_by_member_token(@activity.actor_token)
-        @badge.grant(member, act)
+        @badge.grant(member, act, @level)
       end
     
     end
 
     def concede?(count, qtty, badge)
-      Trickster.coin_toss(badge.p) && right_count?(count, qtty, badge)
+      Trickster.coin_toss(badge.p) && right_count?(count, qtty, badge) && level_check(count, qtty, badge)
     end
 
-    def right_count?(received, expected, badge)
+    def right_count?(received, expected, badge)  
       badge.repeatable? ? (received % expected == 0) : (received == expected)
     end
-  
-  
-  
+    
+    def level_calc(count, qtty)
+      count / qtty
+    end
+    
+    def level_check(count, qtty, badge)
+      return true if !badge.repeatable?       
+      max_level = badge.max_level || 3
+      level_calc(count,qtty) <= max_level      
+    end
+    
   end
 end
