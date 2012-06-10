@@ -9,6 +9,14 @@
       @app = @activity.app
       @actor = @app.members.find_or_create_by_member_token(@activity.actor_token)
       @p = @app.settings.probabilities.default
+      
+      @recipient = if @activity.target_author_token
+          @app.members.find_or_create_by_member_token(@activity.target_author_token) 
+        elsif @activity.target_token
+          @app.members.find_or_create_by_member_token(@activity.target_token) 
+        else
+          nil
+        end
      
       @do_reward = @do_transfer = false
       @modulated_p = @reward_amount = @transfer_amount = @transfer_recipient_token = nil
@@ -35,14 +43,24 @@
         :do_transfer => @do_transfer,
         :category => @activity.category,
         :p => @p,
-        :modulated_p => @modulated_p
+        :modulated_p => @modulated_p,
       }
       
-      data[:reward_amount] = @reward_amount if @do_reward
+      if @do_reward
+        
+        data[:reward_amount] = @reward_amount 
+        data[:actor_kandy_balance] = @actor.kandies_count + @reward_amount         
+    
+      end
       
       if @do_transfer
+        
         data[:transfer_amount] = @transfer_amount 
         data[:transfer_recipient_token] = @transfer_recipient_token
+        
+        data[:actor_kandy_balance] = data[:actor_kandy_balance] - @transfer_amount         
+        data[:transfer_recipient_kandy_balance] = @recipient.kandies_count + @transfer_amount 
+    
       end
       
       data[:reward_amount] = (@reward_amount - @transfer_amount) if @do_transfer
