@@ -29,33 +29,39 @@ class Member < ActiveRecord::Base
 
   def receive_kandies(amount, activity_uuid)
     return false unless amount > 0
-    amount.times do
-      k = Kandy.create
-      kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid)
-    end
-    add_to_kandies_cache(amount)
+
+    amount.times { kandy_ownerships.create(:kandy => Kandy.create, :activity_uuid => activity_uuid) }
+
+    increase_kandy_balance_by(amount)
   end
 
   def transfer_kandies(amount, recipient, activity_uuid)
-    return false unless amount < self.kandies.count
+    return false unless amount < kandies_count
 
-    self.kandies.pick(amount, :fifo).each { |k| recipient.kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid) }
-    substract_from_kandies_cache(amount)
-    recipient.add_to_kandies_cache(amount)
+    kandies.pick(amount, :fifo).each { |k| recipient.kandy_ownerships.create(:kandy_id => k.id, :activity_uuid => activity_uuid) }
+
+    decrease_kandy_balance_by(amount)
+    recipient.increase_kandy_balance_by(amount)
+
   end
   
-  def add_to_kandies_cache(amount)
-    update_attribute(:kandies_count, kandies_count+amount)
+  def increase_kandy_balance_by(amount)
+    logger.debug("+ amount #{amount}")
+    update_attribute(:kandies_count, kandies_count + amount)
   end
   
-  def substract_from_kandies_cache(amount)
-    update_attribute(:kandies_count, kandies_count-amount)
+  def decrease_kandy_balance_by(amount)
+    logger.debug("- amount #{amount}")
+    update_attribute(:kandies_count, kandies_count - amount)
+  end
+  
+  def update_kandy_balance
+    update_attribute(:kandies_count, kandies.count)
   end
 
   def receive_badge(badge, activity_uuid)
     badge_grants.create(:activity_uuid => activity_uuid, :badge_id => badge.id) if can_has_badge?(badge)
   end
-
 
   def has_badge?(badge)
     badges.collect(&:title).include?(badge.title)
@@ -64,12 +70,6 @@ class Member < ActiveRecord::Base
   def can_has_badge?(badge)
     return badge.repeatable? ? true : !has_badge?(badge)
   end
-
-  def update_kandy_cache
-    kc = self.kandies.count
-    self.update_attribute(:kandies_count, kc)
-  end
-
 
 end
 

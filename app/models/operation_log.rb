@@ -41,7 +41,6 @@ class OperationLog < ActiveRecord::Base
 
     actor = app.members.find_or_create_by_member_token(actor_token)
     actor.receive_kandies(data[:reward_amount], activity.uuid)
-
   end
 
   def execute_transfer

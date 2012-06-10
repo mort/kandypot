@@ -48,9 +48,9 @@ class App < ActiveRecord::Base
     @settings ||= Settings.new(path)
   end
   
-  def update_members_kandy_cache
+  def update_members_kandy_balance
     members.all.each do |member|
-      member.update_kandy_cache
+      member.update_kandy_balance
     end
     self.update_attribute(:updated_at, Time.now)
   end
