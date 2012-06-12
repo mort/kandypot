@@ -1,6 +1,6 @@
 module BadgeProcessors
-
-  class Contribution < Processor
-  end
-
+# 
+#   class Contribution < BadgeProcessor
+#   end
+# 
 end

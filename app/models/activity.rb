@@ -85,7 +85,7 @@ class Activity < ActiveRecord::Base
   end
 
   def predicate_attr
-    p = (category?(:creation) ? 'object' : 'target')
+    p = (category?(:creation) || category?(:action)) ? 'object' : 'target'
     "#{p}_type".to_sym
   end
 

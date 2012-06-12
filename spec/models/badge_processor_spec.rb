@@ -1,7 +1,7 @@
 require File.expand_path('../../spec_helper', __FILE__)
 require File.expand_path('../../../lib/badges', __FILE__)
 
-describe BadgeProcessors::Processor do
+describe BadgeProcessors::BaseProcessor do
 
   before(:each) do
     @app = create(:app)
@@ -41,9 +41,14 @@ describe BadgeProcessors::Processor do
     @processor.concede?(badge.qtty*badge.qtty,badge.qtty,badge).should be_true
   end
 
-  it 'should guess bad counts when the badge is repeatable' do
+  it 'should guess bad counts by defect when the badge is repeatable' do
     badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5, :repeatable => true)
     @processor.concede?((badge.qtty*badge.qtty)-1,badge.qtty,badge).should be_false
+  end
+
+  it 'should guess bad counts by excess when the badge is repeatable' do
+    badge = create(:newbish_badge, :app => @app, :badge_type => 'newbish', :qtty => 5, :repeatable => true)
+    @processor.concede?((badge.qtty*badge.qtty)+1,badge.qtty,badge).should be_false
   end
 
 

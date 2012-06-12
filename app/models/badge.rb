@@ -88,7 +88,9 @@ class Badge < ActiveRecord::Base
   private
 
   def processor
-    "BadgeProcessors::#{badge_type.capitalize}".constantize
+    name = "BadgeProcessors::#{badge_type.capitalize}"
+    logger.debug("Proccesor #{name} instantiated")
+    name.constantize
   end
 
 

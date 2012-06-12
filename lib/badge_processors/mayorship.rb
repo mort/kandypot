@@ -1,11 +1,11 @@
 module BadgeProcessors
 
-  class Mayorship < Processor
-
-    
-    
-    
-
-  end
+  # class Mayorship < BadgeProcessor
+  # 
+  #   
+  #   
+  #   
+  # 
+  # end
 
 end
