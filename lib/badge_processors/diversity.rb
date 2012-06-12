@@ -25,20 +25,24 @@ module BadgeProcessors
       # Find how many activities of the type
       count = Activity.count(:conditions => @cond_array)
       
-      if right_count?(count, @qtty)
-        @concede = true
-        
+      if concede?(count)
+
+        final_concede = false
+
         predicate_types.each do |type|
 
           cond = build_base_query(:predicate_type => type)
           count_prime = Activity.count(:conditions => cond)
-          concede = (count_prime >= @qtty)
-          break unless concede
+          final_concede = @badge.repeatable? ? (level_calc(count_prime) >= level_calc(count)) : (count_prime >= @qtty)
+          break unless final_concede
         end
   
-        if concede
+        if final_concede
+          @concede = true
+          @level = level_calc(count) if @badge.repeatable? 
+
           member = Member.find_by_member_token(@activity.actor_token)
-          @badge.grant(member, @activity)           
+          @badge.grant(member, @activity, @level) if member          
         end
       end
         

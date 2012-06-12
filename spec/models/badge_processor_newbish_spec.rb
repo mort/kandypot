@@ -18,7 +18,7 @@ describe BadgeProcessors::Newbish do
     it 'should not grant the badge when the count is less than the expected' do
       c = @badge.qtty-1
       Activity.should_receive(:count).with(anything()).and_return(c)
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(false)
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(false)
       Member.should_not_receive(:find_by_member_token).with(@act.actor_token)
       @member.should_not_receive(:grant)
       @processor.process
@@ -28,7 +28,7 @@ describe BadgeProcessors::Newbish do
     it 'should not grant the badge when the count is more than the expected' do
       c = @badge.qtty+1
       Activity.should_receive(:count).with(anything()).and_return(c)
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(false)
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(false)
       Member.should_not_receive(:find_by_member_token).with(@act.actor_token)
       @badge.should_not_receive(:grant)
 
@@ -39,7 +39,7 @@ describe BadgeProcessors::Newbish do
     it 'should grant the badge when the count is the expected' do
       c = @badge.qtty
       Activity.should_receive(:count).with(anything()).and_return(c)
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_receive(:grant).with(@member, @act, nil)
 
@@ -111,9 +111,9 @@ describe BadgeProcessors::Newbish do
     it 'should grant the badge when the count is the expected' do
       c = @badge.qtty
       Activity.should_receive(:count).with(anything()).and_return(c)
-      @processor.should_receive(:level_check).with(c,@badge.qtty,@badge).and_return((@processor.level_calc(c,@badge.qtty) <= @badge.max_level))
-      @processor.should_receive(:level_calc).with(c,@badge.qtty).and_return((c/@badge.qtty))
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
+      @processor.should_receive(:level_check).with(c).and_return((c/@badge.qtty) <= @badge.max_level)
+      @processor.should_receive(:level_calc).with(c).and_return((c/@badge.qtty))
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_receive(:grant).with(@member, @act, (c/@badge.qtty))
 
@@ -125,7 +125,7 @@ describe BadgeProcessors::Newbish do
       c = @badge.qtty*@badge.qtty
       Activity.should_receive(:count).with(anything()).and_return(c)
 
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_receive(:grant).with(@member, @act,(c/@badge.qtty))
 
@@ -138,8 +138,8 @@ describe BadgeProcessors::Newbish do
       c = @badge.qtty*@badge.qtty
       Activity.should_receive(:count).with(anything()).and_return(c)
 
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
-      @processor.should_receive(:level_check).with(c, @badge.qtty, @badge).and_return((c / @badge.qtty))
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
+      @processor.should_receive(:level_check).with(c).and_return((c / @badge.qtty))
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_receive(:grant).with(@member, @act, (c / @badge.qtty))
 
@@ -152,7 +152,7 @@ describe BadgeProcessors::Newbish do
     it 'should not grant the badge when the count is over a multiple of the expected' do
       c = (@badge.qtty*@badge.qtty)+1
       Activity.should_receive(:count).with(anything()).and_return(c)
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(false)
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(false)
       Member.should_not_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_not_receive(:grant).with(@member, @act)
 
@@ -163,7 +163,7 @@ describe BadgeProcessors::Newbish do
     it 'should not grant the badge when the count is under multiple of the expected' do
       c = (@badge.qtty*@badge.qtty)-1
       Activity.should_receive(:count).with(anything()).and_return(c)
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(false)
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(false)
       Member.should_not_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_not_receive(:grant).with(@member, @act)
 
@@ -174,8 +174,8 @@ describe BadgeProcessors::Newbish do
     it 'should not grant the badge when the level exceeds max level' do
       c = (@badge.qtty*@badge.qtty)-1
       Activity.should_receive(:count).with(anything()).and_return(c)
-      @processor.should_receive(:right_count?).with(c, @badge.qtty, @badge).and_return(true)
-      @badge.should_receive(:max_level).and_return((c/@badge.qtty)-1)
+      @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
+      @badge.should_receive(:max_level).twice.and_return((c/@badge.qtty)-1)
       Member.should_not_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_not_receive(:grant).with(@member, @act)
 

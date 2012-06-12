@@ -51,7 +51,7 @@ class Badge < ActiveRecord::Base
   end
 
   def predicate_types
-    read_attribute(:predicate_types).split(';')
+    read_attribute(:predicate_types).split(',')
   end
 
   def predicate_type

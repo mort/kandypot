@@ -8,7 +8,7 @@ describe BadgeProcessors::Diversity do
     before(:each) do
       @app = create(:app)
       @member = create(:member, :app => @app)
-      @badge = create(:diversity_badge, :app => @app, :predicate_types => 'foo;bar;wadus')
+      @badge = create(:diversity_badge, :app => @app, :predicate_types => 'foo,bar,wadus')
       @act = create(:creation_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
       @processor = BadgeProcessors::Diversity.new(@act, @badge)
     end
@@ -34,7 +34,7 @@ describe BadgeProcessors::Diversity do
       @processor.concede.should be_false
     end
 
-    it 'should not be granted when activity reaches the threshold and some other types are over the threshold and others under it' do
+    it 'should not be granted when activity reaches the threshold and some other types are over the threshold but others under it' do
       Activity.should_receive(:count).with(anything()).once.and_return(@badge.qtty)
       Activity.should_receive(:count).with(anything()).once.and_return(@badge.qtty+1)
       Activity.should_receive(:count).with(anything()).once.and_return(@badge.qtty-1)

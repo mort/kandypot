@@ -18,7 +18,7 @@ module BadgeProcessors
       build_base_query
     end
   
-    private
+    #private
 
     def build_base_query(options = {})
       
@@ -61,11 +61,11 @@ module BadgeProcessors
 
       count = Activity.count(:conditions => @cond_arr)
   
-      if concede?(count, @qtty, @badge)
+      if concede?(count)
         @concede = true
         
         # Let's assign a badge level if the badge is repeatable
-        @level = level_calc(count, @qtty) if @badge.repeatable? 
+        @level = level_calc(count) if @badge.repeatable? 
         
         member = Member.find_by_member_token(@activity.actor_token)
         @badge.grant(member, @activity, @level) if member
@@ -75,7 +75,7 @@ module BadgeProcessors
     end
 
     def concede?(count)
-      Trickster.coin_toss(@badge.p) && right_count?(count, @qtty, @badge) && level_check(count, @qtty, @badge)
+      Trickster.coin_toss(@badge.p) && right_count?(count, @qtty) && level_check(count)
     end
 
     def right_count?(received, expected)  
@@ -87,9 +87,8 @@ module BadgeProcessors
     end
     
     def level_check(count)
-      return true if !@badge.repeatable? || !@badge.max_level
-      max_level = @badge.max_level
-      level_calc(count) <= max_level      
+      return true if !@badge.repeatable? || @badge.max_level.nil?
+      level_calc(count) <= @badge.max_level     
     end
     
   end
