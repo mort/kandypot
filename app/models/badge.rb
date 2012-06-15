@@ -19,7 +19,7 @@ class Badge < ActiveRecord::Base
   
   PARAMS_FIELDS.each do |param_field|
     define_method(param_field) { 
-     (params.present? && params[param_field.to_sym]) ? params[param_field.to_sym] : read_attribute(param_field.to_sym)
+     (params.present? && params[param_field]) ? params[param_field] : read_attribute(param_field.to_sym)
     }
     
   end
@@ -38,11 +38,11 @@ class Badge < ActiveRecord::Base
   end
 
   def turn_on
-    update_attribute(:status => 1)
+    update_attribute(:status, 1)
   end
 
   def turn_off
-    update_attribute(:status => 0)
+    update_attribute(:status, 0)
   end
 
 
@@ -89,7 +89,6 @@ class Badge < ActiveRecord::Base
 
   def processor
     name = "BadgeProcessors::#{badge_type.capitalize}"
-    logger.debug("Proccesor #{name} instantiated")
     name.constantize
   end
 

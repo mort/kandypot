@@ -50,17 +50,24 @@
         
         data[:reward_amount] = @reward_amount 
         data[:actor_kandy_balance] = @actor.kandies_count + @reward_amount         
-    
+      
+      else
+      
+        data[:actor_kandy_balance] = @actor.kandies_count 
+      
       end
       
       if @do_transfer
         
         data[:transfer_amount] = @transfer_amount 
         data[:transfer_recipient_token] = @transfer_recipient_token
-        
         data[:actor_kandy_balance] = data[:actor_kandy_balance] - @transfer_amount         
         data[:transfer_recipient_kandy_balance] = @recipient.kandies_count + @transfer_amount 
-    
+
+      else
+
+        data[:transfer_recipient_kandy_balance] = @recipient.kandies_count
+
       end
       
       data[:reward_amount] = (@reward_amount - @transfer_amount) if @do_transfer
