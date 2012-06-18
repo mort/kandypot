@@ -36,7 +36,7 @@ FactoryGirl.define do
     ip '127.0.0.1'
     published { Time.now }
 
-    factory :creation_act do
+    factory :action_act do
       verb 'post'
       object_type 'photos'
       object_url 'http://example.com/photos /wadus'

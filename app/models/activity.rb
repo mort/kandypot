@@ -69,9 +69,7 @@ class Activity < ActiveRecord::Base
     if (no_object? && no_target?)
       # Sign-ups, etc.
       'singular'
-    elsif has_object? && verb_is?(:post)
-      'creation'
-    elsif has_object? && verb_is_not?(:post)
+    elsif has_object?
       'action'
     elsif person_target?
       # DMs, new friendship, etc.
@@ -85,7 +83,7 @@ class Activity < ActiveRecord::Base
   end
 
   def predicate_attr
-    p = (category?(:creation) || category?(:action)) ? 'object' : 'target'
+    p = category?(:action) ? 'object' : 'target'
     "#{p}_type".to_sym
   end
 
@@ -149,16 +147,15 @@ class Activity < ActiveRecord::Base
     badges.each do |badge|
       badge.process(self)
     end unless badges.blank?
+  
   end
 
   def judge
     Hammurabi.new(self).judge
   end
 
-  def persist_op
-    unless op_data.blank?
-      OperationLog.create!(:data => op_data, :activity => self, :app => app)
-    end
+  def persist_op    
+      OperationLog.create!(:data => op_data, :activity => self, :app => app) unless op_data.blank?
   end
 
   def validate_reward_setting(verb, object_type = nil)

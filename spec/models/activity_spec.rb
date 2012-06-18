@@ -30,12 +30,12 @@ describe Activity do
         badges.stub('on').and_return([@badge])
         @app.stub('badges').and_return(badges)
         @badge.should_receive(:process).with(any_args()).and_return(true)
-        @act = create(:creation_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
+        @act = create(:action_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
       end
     end
 
     it "should have an associated operation log when created" do
-      @act = create(:creation_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
+      @act = create(:action_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
 
       @act.operation_log.should_not be_nil
       @act.operation_log.app.should == @app
@@ -111,9 +111,9 @@ describe Activity, 'singular' do
 end
 
 
-describe Activity, 'creation' do
+describe Activity, 'action' do
   before do
-    @act = build(:creation_act)
+    @act = build(:action_act)
     @act.stub!('validate_verb').and_return(true)
     @act.save!
   end
@@ -127,7 +127,7 @@ describe Activity, 'creation' do
   end
 
   it 'should have the right category' do
-    @act.guess_category.should == 'creation'
+    @act.guess_category.should == 'action'
   end
 
   it 'should not have a target' do
@@ -222,10 +222,10 @@ describe Activity, 'badly formed' do
     @act.should_not be_valid
   end
 
-  context 'creation' do
+  context 'action' do
 
     it 'should not be valid without an object' do
-      @act = build(:creation_act, :object_url => nil)
+      @act = build(:action_act, :object_url => nil)
       @act.should_not be_valid
     end
 

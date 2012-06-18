@@ -109,10 +109,14 @@ describe BadgeProcessors::Newbish do
     end
 
     it 'should grant the badge when the count is the expected' do
+      
       c = @badge.qtty
+      
       Activity.should_receive(:count).with(anything()).and_return(c)
-      @processor.should_receive(:level_check).with(c).and_return((c/@badge.qtty) <= @badge.max_level)
-      @processor.should_receive(:level_calc).with(c).and_return((c/@badge.qtty))
+      
+      
+      @processor.should_receive(:level_calc).with(c).and_return(1)
+      @processor.should_receive(:level_check).with(c).and_return(true)
       @processor.should_receive(:right_count?).with(c, @badge.qtty).and_return(true)
       Member.should_receive(:find_by_member_token).with(@act.actor_token).and_return(@member)
       @badge.should_receive(:grant).with(@member, @act, (c/@badge.qtty))

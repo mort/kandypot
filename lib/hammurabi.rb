@@ -2,12 +2,15 @@
  
   class Hammurabi
     
+    
     attr_reader :activity, :app, :actor, :do_reward, :do_transfer, :transfer_recipient_token, :transfer_amount, :reward_amount, :modulated_p, :p
     
     def initialize(activity)
+
       @activity = activity
       @app = @activity.app
       @actor = @app.members.find_or_create_by_member_token(@activity.actor_token)
+      Rails.logger.debug(@actor.inspect)
       @p = @app.settings.probabilities.default
       
       @recipient = if @activity.target_author_token
@@ -17,7 +20,10 @@
         else
           nil
         end
-     
+           
+      Rails.logger.debug(@recipient.inspect) if @recipient
+           
+           
       @do_reward = @do_transfer = false
       @modulated_p = @reward_amount = @transfer_amount = @transfer_recipient_token = nil
       @op_data = {}
@@ -26,7 +32,7 @@
     def judge
             
       case @activity.category 
-        when 'singular', 'creation', 'action'
+        when 'singular', 'action'
           reward(@app, @actor, @p, false)
         when 'reaction'
           reward(@app, @actor, @p, true) { @transfer_recipient_token = @activity.target_author_token }
@@ -47,26 +53,26 @@
       }
       
       if @do_reward
-        
+                
         data[:reward_amount] = @reward_amount 
-        data[:actor_kandy_balance] = @actor.kandies_count + @reward_amount         
+        data[:actor_balance] = @actor.kandies_count + @reward_amount         
       
       else
-      
+        
         data[:actor_kandy_balance] = @actor.kandies_count 
       
       end
       
       if @do_transfer
-        
+                
         data[:transfer_amount] = @transfer_amount 
         data[:transfer_recipient_token] = @transfer_recipient_token
-        data[:actor_kandy_balance] = data[:actor_kandy_balance] - @transfer_amount         
-        data[:transfer_recipient_kandy_balance] = @recipient.kandies_count + @transfer_amount 
+        data[:actor_balance] = data[:actor_balance] - @transfer_amount         
+        data[:transfer_recipient_balance] = @recipient.kandies_count + @transfer_amount 
 
       else
 
-        data[:transfer_recipient_kandy_balance] = @recipient.kandies_count
+        data[:transfer_recipient_kandy_balance] = @recipient.kandies_count if @recipient
 
       end
       

@@ -9,7 +9,7 @@ describe BadgeProcessors::Diversity do
       @app = create(:app)
       @member = create(:member, :app => @app)
       @badge = create(:diversity_badge, :app => @app, :predicate_types => 'foo,bar,wadus')
-      @act = create(:creation_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
+      @act = create(:action_act, :app => @app, :actor_token => @member.member_token, :object_type => 'foo')
       @processor = BadgeProcessors::Diversity.new(@act, @badge)
     end
 

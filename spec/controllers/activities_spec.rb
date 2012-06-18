@@ -86,7 +86,7 @@ describe ActivitiesController, 'create' do
 
   end
 
-  context 'creation' do
+  context 'action' do
 
     before(:each) do
       @data = {
@@ -125,14 +125,18 @@ describe ActivitiesController, 'create' do
       r["data"]['kind'].should == 'OperationLog'
 
       r['data']['do_reward'].should be_true
+
       r['data']['do_transfer'].should be_false
       r['data']['do_badges'].should be_nil
 
       r['data']['reward_amount'].should_not be_nil
+      r['data']['actor_balance'].should_not be_nil
+
+
       r['data']['transfer_amount'].should be_nil
 
       r['data']['activity_uuid'].should == act.uuid
-      r['data']['category'].should == 'creation'
+      r['data']['category'].should == 'action'
       r['data']['actor_token'].should == act.actor_token
       r['data']['p'].should_not be_nil
       r['data']['modulated_p'].should == 1
@@ -188,7 +192,10 @@ describe ActivitiesController, 'create' do
       r['data']['do_badges'].should be_nil
 
       r['data']['reward_amount'].should_not be_nil
+      r['data']['actor_balance'].should_not be_nil
+
       r['data']['transfer_amount'].should_not be_nil
+      r['data']['transfer_recipient_balance'].should_not be_nil
 
       r['data']['activity_uuid'].should == act.uuid
       r['data']['category'].should == 'reaction'
@@ -245,7 +252,10 @@ describe ActivitiesController, 'create' do
       r['data']['do_badges'].should be_nil
 
       r['data']['reward_amount'].should_not be_nil
+      r['data']['actor_balance'].should_not be_nil
       r['data']['transfer_amount'].should_not be_nil
+      r['data']['transfer_recipient_balance'].should_not be_nil
+
 
       r['data']['activity_uuid'].should == act.uuid
       r['data']['category'].should == 'interaction'
@@ -285,11 +295,17 @@ describe ActivitiesController, 'create' do
       response.response_code.should == 201
       response.body.should_not be_blank
 
+      puts  response.body
+
       act = Activity.last
 
       r =  ActiveSupport::JSON.decode(response.body)
 
+      puts r.inspect
+      
       r.should be_instance_of(Hash)
+      
+      
 
       r["apiVersion"].should_not be_nil
       r["id"].should_not be_nil
@@ -305,10 +321,14 @@ describe ActivitiesController, 'create' do
       r['data']['do_badges'].should be_true
 
       r['data']['reward_amount'].should_not be_nil
+      r['data']['actor_balance'].should_not be_nil
+
       r['data']['transfer_amount'].should be_nil
+      r['data']['transfer_recipient_balance'].should be_nil
+
 
       r['data']['activity_uuid'].should == act.uuid
-      r['data']['category'].should == 'creation'
+      r['data']['category'].should == 'action'
       r['data']['actor_token'].should == act.actor_token
       r['data']['p'].should_not be_nil
       r['data']['modulated_p'].should == 1

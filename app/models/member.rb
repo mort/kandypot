@@ -46,12 +46,12 @@ class Member < ActiveRecord::Base
   end
   
   def increase_kandy_balance_by(amount)
-    logger.debug("+ amount #{amount}")
+    logger.debug("BALANCE: + #{amount} #{member_token}")
     update_attribute(:kandies_count, kandies_count + amount)
   end
   
   def decrease_kandy_balance_by(amount)
-    logger.debug("- amount #{amount}")
+    logger.debug("BALANCE - #{amount} #{member_token}")
     update_attribute(:kandies_count, kandies_count - amount)
   end
   

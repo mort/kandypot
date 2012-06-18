@@ -109,11 +109,11 @@ describe Hammurabi do
     end
 
 
-    context 'a creation activity' do
+    context 'an action activity' do
 
        before(:each) do
          clean_db
-         @act = FactoryGirl.create(:creation_act)
+         @act = FactoryGirl.create(:action_act)
        end
 
        context 'when rewarded' do

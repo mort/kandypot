@@ -63,6 +63,7 @@ class Badge < ActiveRecord::Base
   end
 
   def grant(member, activity, level = nil)
+    logger.debug('Granting ')
     return false unless member.can_has_badge?(self)
     activity.op_data ||= {}
     activity.op_data[:do_badges] = true
