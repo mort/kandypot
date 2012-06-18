@@ -29,6 +29,7 @@ module BadgeProcessors
       scp = BadgeScope.find(@badge.badge_scope).name
       
       predicate_types = options[:predicate_types] || @badge.predicate_types
+      predicate_type = @badge.predicate_type
       verb = options[:verb] || @badge.verb 
       actor_token = options[:actor_token] || @activity.actor_token
       app_id = options[:app_id] || @badge.app_id
@@ -48,7 +49,7 @@ module BadgeProcessors
         @cond_params << verb
       end
 
-      if !@activity.category?(:singular) and predicate_types && predicate_types != '*'
+      if !@activity.category?(:singular) and predicate_types && predicate_type != '*'
         @cond_str << " AND activities.#{col} IN (?)"
         @cond_params << predicate_types
       end
@@ -60,7 +61,7 @@ module BadgeProcessors
     def concede_by_quantity
 
       count = Activity.count(:conditions => @cond_arr)
-  
+        
       if concede?(count)
         @concede = true
         

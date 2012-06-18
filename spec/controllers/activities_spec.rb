@@ -274,7 +274,7 @@ describe ActivitiesController, 'create' do
     before(:each) do
 
       @badge = create(:newbish_badge, :app => @app, :verb => 'post')
-
+      
       @data = {
         :verb => 'post',
         :actor_token => 'f'*32,
@@ -305,8 +305,6 @@ describe ActivitiesController, 'create' do
       
       r.should be_instance_of(Hash)
       
-      
-
       r["apiVersion"].should_not be_nil
       r["id"].should_not be_nil
       r["method"].should_not be_nil
@@ -326,13 +324,13 @@ describe ActivitiesController, 'create' do
       r['data']['transfer_amount'].should be_nil
       r['data']['transfer_recipient_balance'].should be_nil
 
-
       r['data']['activity_uuid'].should == act.uuid
       r['data']['category'].should == 'action'
       r['data']['actor_token'].should == act.actor_token
       r['data']['p'].should_not be_nil
       r['data']['modulated_p'].should == 1
-
+       
+      r['data']['badges'].should_not be_nil
       r['data']['badges'].should be_instance_of(Hash)
       r['data']['badges'][act.actor_token].should be_instance_of(Hash)
       r['data']['badges'][act.actor_token]['description'].should == @badge.description
