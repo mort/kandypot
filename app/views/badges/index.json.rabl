@@ -1,3 +1,6 @@
+collection @badges
+attributes Badge::PARAMS_FIELDS+[:title, :description]
+
 node :apiVersion do
  '1.0'
 end
@@ -14,4 +17,4 @@ node :context do
   params[:context]
 end if params[:context]
 
-collection @badges
+
