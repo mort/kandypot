@@ -9,7 +9,6 @@ gem 'wvanbergen-http_status_exceptions', '0.1.3', :require => 'http_status_excep
 gem 'javan-whenever', '0.3.0'
 gem 'daemons', '1.0.10'
 gem "subdomain_routes", '0.3.1', :require => "subdomain_routes"
-gem 'hoptoad_notifier', '2.1.3'
 gem 'will_paginate', '~> 2.3.11'
 gem 'ruby-hmac', '0.4.0'
 gem 'uuid', '2.3.1'
